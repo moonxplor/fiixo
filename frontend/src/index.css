@@ -5,20 +5,51 @@
 :root {
   font-family: 'Space Grotesk', sans-serif;
   --pop-ink: #111827;
-  --pop-grey-bg: #2B2D42;
-  --pop-card-grey: #3A3D56;
-  --pop-card-sub: #454866;
   --pop-pink: #FF3366;
   --pop-cyan: #00D2FF;
   --pop-purple: #7C4DFF;
   --pop-green: #00E676;
 }
 
+/* Light Mode (Default) - Crisp Retro Vector Pop Art (White / Off-White Canvas with Ben-Day dot matrix) */
+:root, .light {
+  --pop-bg: #FFFFFF;
+  --pop-dot: #D1D5DB;
+  --pop-card: #FFFFFF;
+  --pop-card-inner: #F3F4F6;
+  --pop-card-alt: #E5E7EB;
+  --pop-text: #111827;
+  --pop-text-muted: #4B5563;
+  --pop-input-bg: #F9FAFB;
+  --pop-code-bg: #1E2030;
+  --pop-code-text: #F8FAFC;
+  --pop-chip-bg: #F3F4F6;
+  --pop-chip-hover: #E5E7EB;
+}
+
+/* Dark Mode - Retro Vector Pop Slate-Grey Ink Studio */
+.dark {
+  --pop-bg: #222436;
+  --pop-dot: #161724;
+  --pop-card: #2E324B;
+  --pop-card-inner: #3D4161;
+  --pop-card-alt: #4A4E74;
+  --pop-text: #F8FAFC;
+  --pop-text-muted: #9CA3AF;
+  --pop-input-bg: #1E2030;
+  --pop-code-bg: #161824;
+  --pop-code-text: #F8FAFC;
+  --pop-chip-bg: #3D4161;
+  --pop-chip-hover: #4A4E74;
+}
+
 body {
-  background-color: var(--pop-grey-bg);
-  /* Vector Pop subtle ink dot matrix on matte grey background */
-  background-image: radial-gradient(#1A1B28 2px, transparent 2px);
-  background-size: 24px 24px;
+  background-color: var(--pop-bg);
+  color: var(--pop-text);
+  /* Retro Vector Pop Halftone / Ben-Day Ink Dot Matrix */
+  background-image: radial-gradient(var(--pop-dot) 2px, transparent 2px);
+  background-size: 22px 22px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3, h4, .font-display {
@@ -33,20 +64,20 @@ code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Vector Pop Neo-Brutalist 3.5px Solid Ink Card */
-.pop-grey-card {
-  background-color: var(--pop-card-grey);
+/* Retro Vector Pop Art 3.5px Solid Ink Card & Sharp Neo-Brutalist Drop Shadows */
+.pop-card {
+  background-color: var(--pop-card);
   border: 3.5px solid var(--pop-ink);
-  box-shadow: 5px 5px 0px var(--pop-ink);
+  box-shadow: 6px 6px 0px var(--pop-ink);
   border-radius: 20px;
   transition: all 0.15s ease;
 }
-.pop-grey-card:hover {
+.pop-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0px var(--pop-ink);
+  box-shadow: 8px 8px 0px var(--pop-ink);
 }
 
-/* Vector Pop Buttons */
+/* Retro Vector Pop Interactive Action Buttons */
 .pop-btn-pink {
   background-color: var(--pop-pink);
   color: #FFFFFF;
@@ -101,17 +132,33 @@ code, pre, .font-mono {
   box-shadow: 1px 1px 0px var(--pop-ink);
 }
 
-/* Custom ink scrollbar */
+/* Comic Speech Balloons */
+.comic-balloon-agent {
+  background-color: var(--pop-card-inner);
+  border: 3.5px solid var(--pop-ink);
+  box-shadow: 5px 5px 0px var(--pop-ink);
+  border-radius: 18px;
+}
+
+.comic-balloon-user {
+  background-color: var(--pop-pink);
+  color: #FFFFFF;
+  border: 3.5px solid var(--pop-ink);
+  box-shadow: 5px 5px 0px var(--pop-ink);
+  border-radius: 18px;
+}
+
+/* Custom Vector Pop Ink Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #25273A;
+  background: var(--pop-card-inner);
 }
 ::-webkit-scrollbar-thumb {
-  background: #111827;
-  border: 1px solid #454866;
+  background: var(--pop-ink);
+  border: 2px solid var(--pop-card-alt);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
