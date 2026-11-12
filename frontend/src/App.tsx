@@ -342,10 +342,10 @@ export function App() {
         </div>
       </header>
 
-      <!-- Main 3-Panel Vector Pop Grey Layout -->
+      {/* Main 3-Panel Vector Pop Grey Layout */}
       <div className="flex-1 flex overflow-hidden p-3 sm:p-5 gap-5">
         
-        <!-- Left Panel: Repositories Shelf -->
+        {/* Left Panel: Repositories Shelf */}
         <aside className="w-76 pop-grey-card flex flex-col p-5 hidden md:flex justify-between">
           <div>
             <div className="flex items-center justify-between mb-5 pb-3 border-b-3 border-[#111827]">
@@ -401,17 +401,17 @@ export function App() {
             </div>
           </div>
 
-          <!-- Bottom Security Badge -->
+          {/* Bottom Security Badge */}
           <div className="pt-4 border-t-3 border-[#111827] mt-3 flex items-center gap-2 text-xs text-gray-300 font-black">
             <ShieldCheck className="w-4 h-4 text-[#00E676] flex-shrink-0" />
             <span>POSTGRES RLS ISOLATED</span>
           </div>
         </aside>
 
-        <!-- Center Panel: Conversational AI Agent Comic Panel -->
+        {/* Center Panel: Conversational AI Agent Comic Panel */}
         <main className="flex-1 pop-grey-card flex flex-col p-6 overflow-hidden justify-between">
           
-          <!-- Conversation Stream -->
+          {/* Conversation Stream */}
           <div className="flex-1 overflow-y-auto space-y-5 pr-2">
             {messages.map((m, idx) => (
               <div 
@@ -437,7 +437,7 @@ export function App() {
             ))}
           </div>
 
-          <!-- Action Suggestion Burst Chips -->
+          {/* Action Suggestion Burst Chips */}
           <div className="pt-4 border-t-3 border-[#111827] mt-3">
             <div className="flex flex-wrap gap-2 mb-3">
               {[
@@ -456,7 +456,7 @@ export function App() {
               ))}
             </div>
 
-            <!-- Big Vector Ink Input Bar -->
+            {/* Big Vector Ink Input Bar */}
             <div className="bg-[#2B2D42] border-3 border-[#111827] rounded-2xl p-2.5 shadow-[4px_4px_0px_#111827] flex items-center gap-3">
               <input
                 type="text"
@@ -477,7 +477,7 @@ export function App() {
           </div>
         </main>
 
-        <!-- Right Panel: Live Agent Telemetry & Transparency -->
+        {/* Right Panel: Live Agent Telemetry & Transparency */}
         <aside className="w-80 pop-grey-card flex flex-col p-5 hidden lg:flex justify-between">
           <div>
             <div className="flex items-center justify-between mb-5 pb-3 border-b-3 border-[#111827]">
@@ -517,7 +517,7 @@ export function App() {
             </div>
           </div>
 
-          <!-- Transparency Guarantee Sticker -->
+          {/* Transparency Guarantee Sticker */}
           <div className="mt-4 p-3.5 bg-[#454866] border-3 border-[#111827] rounded-2xl shadow-[3px_3px_0px_#111827] text-xs text-gray-200 leading-relaxed">
             <span className="font-pop-title text-white block mb-0.5 text-xs">TRANSPARENCY RULE:</span>
             Zero silent code modifications. Every tool, diff, and verification step is recorded.

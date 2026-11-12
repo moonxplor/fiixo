@@ -48,11 +48,11 @@ export const Mascot: React.FC<MascotProps> = ({
         viewBox="0 0 120 120" 
         className="w-full h-full filter drop-shadow-[3px_3px_0px_#111827] transition-transform duration-200 hover:scale-110 hover:-rotate-3"
       >
-        <!-- Antenna -->
+        {/* Antenna */}
         <line x1="60" y1="28" x2="60" y2="12" stroke="#111827" strokeWidth="5" strokeLinecap="round" />
         <circle cx="60" cy="10" r="8" fill="#FF3366" stroke="#111827" strokeWidth="4" />
         
-        <!-- Vector Pop Rounded Head Block -->
+        {/* Vector Pop Rounded Head Block */}
         <rect 
           x="20" 
           y="26" 
@@ -64,7 +64,7 @@ export const Mascot: React.FC<MascotProps> = ({
           strokeWidth="4.5" 
         />
         
-        <!-- Inner Comic Visor Box -->
+        {/* Inner Comic Visor Box */}
         <rect 
           x="28" 
           y="36" 
@@ -76,7 +76,7 @@ export const Mascot: React.FC<MascotProps> = ({
           strokeWidth="3.5" 
         />
 
-        <!-- Big Vector Pop Glossy Eyes -->
+        {/* Big Vector Pop Glossy Eyes */}
         {state === 'thinking' ? (
           <>
             <circle cx="46" cy="54" r="7" fill="#FF3366" stroke="#111827" strokeWidth="2.5" />
@@ -103,7 +103,7 @@ export const Mascot: React.FC<MascotProps> = ({
           </>
         )}
 
-        <!-- Big Expressive Comic Mouth -->
+        {/* Big Expressive Comic Mouth */}
         {state === 'ready' || state === 'completed' ? (
           <path d="M44 65 Q60 78 76 65" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" fill="none" />
         ) : state === 'coding' ? (
@@ -112,16 +112,16 @@ export const Mascot: React.FC<MascotProps> = ({
           <line x1="48" y1="67" x2="72" y2="67" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
         )}
 
-        <!-- Pop Dots Cheeks -->
+        {/* Pop Dots Cheeks */}
         <circle cx="34" cy="62" r="4" fill="#FF3366" stroke="#111827" strokeWidth="1.5" />
         <circle cx="86" cy="62" r="4" fill="#FF3366" stroke="#111827" strokeWidth="1.5" />
 
-        <!-- Cartoon Feet -->
+        {/* Cartoon Feet */}
         <rect x="38" y="100" width="12" height="9" rx="4" fill="#111827" />
         <rect x="70" y="100" width="12" height="9" rx="4" fill="#111827" />
       </svg>
       
-      <!-- Hard Shadow Indicator -->
+      {/* Hard Shadow Indicator */}
       <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
         <span className="relative inline-flex rounded-full h-4 w-4 border-2 border-[#111827]" style={{ backgroundColor: stateColor }}></span>
       </span>
