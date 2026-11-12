@@ -4,6 +4,7 @@
 
 :root {
   font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: dark;
 }
 
 h1, h2, h3, h4, .font-display {
@@ -14,18 +15,18 @@ code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom scrollbars */
+/* Custom smooth dark violet scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #151122;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D5CAED;
+  background: #3B2D54;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #7955F5;
+  background: #7048E8;
 }
