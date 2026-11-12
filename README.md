@@ -1,10 +1,10 @@
-# FIIXO 🚀
+# FIIXO 
 ### AI-Powered Repository Revival and Developer Companion SaaS
 > *"Understand. Explain. Repair. Teach."*
 
 ---
 
-## ⚡ Quick Start: How to Open and Run Fiixo
+##  How to Open and Run Fiixo
 
 ### 1. Start the Backend API (FastAPI)
 In a terminal, run:
@@ -28,7 +28,7 @@ npm run dev
 
 ---
 
-## 🧪 Run Automated Tests
+##  Run Automated Tests
 All authentication, multi-tenant isolation, and IDOR protection tests can be run via:
 ```bash
 cd backend
@@ -37,7 +37,7 @@ venv/bin/pytest tests -v
 
 ---
 
-## 🌟 Key Features Implemented in Phase 1
+##  Key Features Implemented in Phase 1
 - **Multi-Tenant Workspace Isolation:** Strict separation of projects, repos, and settings per workspace with zero cross-tenant data leakage.
 - **Hierarchical RBAC:** `Owner`, `Admin`, and `Member` permission controls enforced server-side.
 - **Enterprise Security:**
