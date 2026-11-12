@@ -1,10 +1,10 @@
 # FIIXO 
-### AI-Powered Repository Revival and Developer Companion SaaS
+###  Repository Revival and Developer Companion SaaS
 > *"Understand. Explain. Repair. Teach."*
 
 ---
 
-##  How to Open and Run Fiixo
+##  How to Open ?
 
 ### 1. Start the Backend API (FastAPI)
 In a terminal, run:
