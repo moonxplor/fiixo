@@ -3,30 +3,117 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Inter', system-ui, sans-serif;
-  color-scheme: dark;
+  font-family: 'Space Grotesk', sans-serif;
+  --pop-ink: #111827;
+  --pop-grey-bg: #2B2D42;
+  --pop-card-grey: #3A3D56;
+  --pop-card-sub: #454866;
+  --pop-pink: #FF3366;
+  --pop-cyan: #00D2FF;
+  --pop-purple: #7C4DFF;
+  --pop-green: #00E676;
+}
+
+body {
+  background-color: var(--pop-grey-bg);
+  /* Vector Pop subtle ink dot matrix on matte grey background */
+  background-image: radial-gradient(#1A1B28 2px, transparent 2px);
+  background-size: 24px 24px;
 }
 
 h1, h2, h3, h4, .font-display {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+.font-pop-title {
+  font-family: 'Bungee', cursive;
+}
+
 code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom smooth dark violet scrollbars */
+/* Vector Pop Neo-Brutalist 3.5px Solid Ink Card */
+.pop-grey-card {
+  background-color: var(--pop-card-grey);
+  border: 3.5px solid var(--pop-ink);
+  box-shadow: 5px 5px 0px var(--pop-ink);
+  border-radius: 20px;
+  transition: all 0.15s ease;
+}
+.pop-grey-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px var(--pop-ink);
+}
+
+/* Vector Pop Buttons */
+.pop-btn-pink {
+  background-color: var(--pop-pink);
+  color: #FFFFFF;
+  border: 3px solid var(--pop-ink);
+  box-shadow: 4px 4px 0px var(--pop-ink);
+  border-radius: 14px;
+  font-weight: 800;
+  transition: all 0.1s ease;
+}
+.pop-btn-pink:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--pop-ink);
+}
+.pop-btn-pink:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--pop-ink);
+}
+
+.pop-btn-cyan {
+  background-color: var(--pop-cyan);
+  color: var(--pop-ink);
+  border: 3px solid var(--pop-ink);
+  box-shadow: 4px 4px 0px var(--pop-ink);
+  border-radius: 14px;
+  font-weight: 800;
+  transition: all 0.1s ease;
+}
+.pop-btn-cyan:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--pop-ink);
+}
+.pop-btn-cyan:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--pop-ink);
+}
+
+.pop-btn-purple {
+  background-color: var(--pop-purple);
+  color: #FFFFFF;
+  border: 3px solid var(--pop-ink);
+  box-shadow: 4px 4px 0px var(--pop-ink);
+  border-radius: 14px;
+  font-weight: 800;
+  transition: all 0.1s ease;
+}
+.pop-btn-purple:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--pop-ink);
+}
+.pop-btn-purple:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--pop-ink);
+}
+
+/* Custom ink scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #151122;
+  background: #25273A;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3B2D54;
+  background: #111827;
+  border: 1px solid #454866;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #7048E8;
+  background: var(--pop-pink);
 }

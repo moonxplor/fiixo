@@ -29,100 +29,101 @@ export const Mascot: React.FC<MascotProps> = ({
     xl: 'w-36 h-36'
   };
 
-  // Modern Vector Palette without repetitive yellow
+  // Vector Pop Art Palette: Bold solid saturated tones against dark outlines
   const stateColor = {
-    ready: '#7048E8',
-    exploring: '#339AF0',
-    thinking: '#845EF7',
-    debugging: '#F06595',
-    coding: '#20C997',
-    testing: '#38D9A9',
-    waiting_for_approval: '#FF922B',
-    completed: '#20C997',
-    error: '#FF6B6B'
+    ready: '#00D2FF',
+    exploring: '#7C4DFF',
+    thinking: '#FF3366',
+    debugging: '#FF5252',
+    coding: '#00E676',
+    testing: '#00E676',
+    waiting_for_approval: '#FF9100',
+    completed: '#00E676',
+    error: '#FF1744'
   }[state];
 
   return (
     <div className={`relative inline-flex items-center justify-center ${sizeMap[size]} ${className}`}>
       <svg 
         viewBox="0 0 120 120" 
-        className="w-full h-full drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-105"
+        className="w-full h-full filter drop-shadow-[3px_3px_0px_#111827] transition-transform duration-200 hover:scale-110 hover:-rotate-3"
       >
-        {/* Antenna */}
-        <line x1="60" y1="28" x2="60" y2="12" stroke="#151122" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="60" cy="10" r="7" fill={stateColor} stroke="#151122" strokeWidth="3" className="animate-pulse" />
+        <!-- Antenna -->
+        <line x1="60" y1="28" x2="60" y2="12" stroke="#111827" strokeWidth="5" strokeLinecap="round" />
+        <circle cx="60" cy="10" r="8" fill="#FF3366" stroke="#111827" strokeWidth="4" />
         
-        {/* Head / Body */}
+        <!-- Vector Pop Rounded Head Block -->
         <rect 
           x="20" 
           y="26" 
           width="80" 
-          height="76" 
-          rx="22" 
+          height="74" 
+          rx="18" 
           fill={stateColor} 
-          stroke="#151122" 
-          strokeWidth="4" 
+          stroke="#111827" 
+          strokeWidth="4.5" 
         />
         
-        {/* Visor Screen */}
+        <!-- Inner Comic Visor Box -->
         <rect 
           x="28" 
           y="36" 
           width="64" 
-          height="42" 
-          rx="12" 
-          fill="#0D0B14" 
-          stroke="#151122" 
-          strokeWidth="3" 
+          height="40" 
+          rx="10" 
+          fill="#1E2030" 
+          stroke="#111827" 
+          strokeWidth="3.5" 
         />
 
-        {/* Eyes based on state - Bright crisp cyan/white */}
+        <!-- Big Vector Pop Glossy Eyes -->
         {state === 'thinking' ? (
           <>
-            <circle cx="46" cy="54" r="5" fill="#339AF0" className="animate-ping" />
-            <circle cx="74" cy="54" r="5" fill="#339AF0" />
+            <circle cx="46" cy="54" r="7" fill="#FF3366" stroke="#111827" strokeWidth="2.5" />
+            <circle cx="74" cy="54" r="7" fill="#00D2FF" stroke="#111827" strokeWidth="2.5" />
           </>
         ) : state === 'debugging' ? (
           <>
-            <text x="42" y="60" fill="#F06595" fontSize="16" fontWeight="bold">x</text>
-            <text x="70" y="60" fill="#F06595" fontSize="16" fontWeight="bold">x</text>
+            <text x="40" y="60" fill="#FF3366" fontSize="18" fontWeight="900" fontFamily="sans-serif">X</text>
+            <text x="68" y="60" fill="#FF3366" fontSize="18" fontWeight="900" fontFamily="sans-serif">X</text>
           </>
         ) : state === 'completed' ? (
           <>
-            <path d="M40 54 Q46 48 52 54" stroke="#20C997" strokeWidth="3" fill="none" strokeLinecap="round" />
-            <path d="M68 54 Q74 48 80 54" stroke="#20C997" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <path d="M38 54 Q46 46 54 54" stroke="#00E676" strokeWidth="4" fill="none" strokeLinecap="round" />
+            <path d="M66 54 Q74 46 82 54" stroke="#00E676" strokeWidth="4" fill="none" strokeLinecap="round" />
           </>
         ) : (
           <>
-            <circle cx="46" cy="54" r="6" fill="#339AF0" />
-            <circle cx="74" cy="54" r="6" fill="#339AF0" />
-            <circle cx="48" cy="52" r="2" fill="#FFFFFF" />
-            <circle cx="76" cy="52" r="2" fill="#FFFFFF" />
+            <ellipse cx="46" cy="53" rx="8" ry="10" fill="#FFFFFF" stroke="#111827" strokeWidth="3" />
+            <ellipse cx="74" cy="53" rx="8" ry="10" fill="#FFFFFF" stroke="#111827" strokeWidth="3" />
+            <circle cx="48" cy="54" r="4.5" fill="#111827" />
+            <circle cx="76" cy="54" r="4.5" fill="#111827" />
+            <circle cx="46" cy="51" r="2" fill="#FFFFFF" />
+            <circle cx="74" cy="51" r="2" fill="#FFFFFF" />
           </>
         )}
 
-        {/* Mouth */}
+        <!-- Big Expressive Comic Mouth -->
         {state === 'ready' || state === 'completed' ? (
-          <path d="M46 68 Q60 78 74 68" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
+          <path d="M44 65 Q60 78 76 65" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" fill="none" />
         ) : state === 'coding' ? (
-          <rect x="50" y="68" width="20" height="4" rx="2" fill="#339AF0" />
+          <rect x="48" y="65" width="24" height="5" rx="2.5" fill="#00E676" stroke="#111827" strokeWidth="2" />
         ) : (
-          <line x1="50" y1="70" x2="70" y2="70" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" />
+          <line x1="48" y1="67" x2="72" y2="67" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
         )}
 
-        {/* Cheek blushes */}
-        <circle cx="35" cy="62" r="3" fill="#F06595" opacity="0.8" />
-        <circle cx="85" cy="62" r="3" fill="#F06595" opacity="0.8" />
+        <!-- Pop Dots Cheeks -->
+        <circle cx="34" cy="62" r="4" fill="#FF3366" stroke="#111827" strokeWidth="1.5" />
+        <circle cx="86" cy="62" r="4" fill="#FF3366" stroke="#111827" strokeWidth="1.5" />
 
-        {/* Small Legs */}
-        <rect x="40" y="102" width="10" height="8" rx="4" fill="#151122" />
-        <rect x="70" y="102" width="10" height="8" rx="4" fill="#151122" />
+        <!-- Cartoon Feet -->
+        <rect x="38" y="100" width="12" height="9" rx="4" fill="#111827" />
+        <rect x="70" y="100" width="12" height="9" rx="4" fill="#111827" />
       </svg>
       
-      {/* Floating Status Ring Indicator */}
+      <!-- Hard Shadow Indicator -->
       <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: stateColor }}></span>
-        <span className="relative inline-flex rounded-full h-4 w-4 border-2 border-[#0D0B14]" style={{ backgroundColor: stateColor }}></span>
+        <span className="relative inline-flex rounded-full h-4 w-4 border-2 border-[#111827]" style={{ backgroundColor: stateColor }}></span>
       </span>
     </div>
   );
