@@ -9,46 +9,47 @@
   --pop-cyan: #00D2FF;
   --pop-purple: #7C4DFF;
   --pop-green: #00E676;
+  --pop-orange: #FF6B35;
 }
 
-/* Light Mode (Default) - Crisp Retro Vector Pop Art (White / Off-White Canvas with Ben-Day dot matrix) */
+/* Light / Default Mode: Vibrant Sky Blue Retro Pop Art (Lichtenstein Comic Palette) */
 :root, .light {
-  --pop-bg: #FFFFFF;
-  --pop-dot: #D1D5DB;
-  --pop-card: #FFFFFF;
-  --pop-card-inner: #F3F4F6;
-  --pop-card-alt: #E5E7EB;
-  --pop-text: #111827;
-  --pop-text-muted: #4B5563;
-  --pop-input-bg: #F9FAFB;
-  --pop-code-bg: #1E2030;
+  --pop-bg: #70D6FF; /* Electric Vibrant Sky Blue */
+  --pop-dot: #38B6FF; /* Deeper cyan-sky halftone Ben-Day dots */
+  --pop-card: #FFFFFF; /* High-contrast comic white card */
+  --pop-card-inner: #F0F9FF; /* Soft sky tint inner panels */
+  --pop-card-alt: #E0F2FE; /* Crisp sky accent */
+  --pop-text: #111827; /* Solid comic ink black */
+  --pop-text-muted: #374151; /* Dark comic pencil grey */
+  --pop-input-bg: #FFFFFF;
+  --pop-code-bg: #0F172A;
   --pop-code-text: #F8FAFC;
-  --pop-chip-bg: #F3F4F6;
-  --pop-chip-hover: #E5E7EB;
+  --pop-chip-bg: #FFFFFF;
+  --pop-chip-hover: #E0F2FE;
 }
 
-/* Dark Mode - Retro Vector Pop Slate-Grey Ink Studio */
+/* Dark Mode: Deep Midnight Pop (Deep Sky & Slate Contrast) */
 .dark {
-  --pop-bg: #222436;
-  --pop-dot: #161724;
-  --pop-card: #2E324B;
-  --pop-card-inner: #3D4161;
-  --pop-card-alt: #4A4E74;
+  --pop-bg: #0F172A; /* Deep Midnight Navy-Sky */
+  --pop-dot: #1E293B; /* Subtle dark dot matrix */
+  --pop-card: #1E293B; /* Deep Slate-Navy card */
+  --pop-card-inner: #334155; /* Inner panel */
+  --pop-card-alt: #475569;
   --pop-text: #F8FAFC;
-  --pop-text-muted: #9CA3AF;
-  --pop-input-bg: #1E2030;
-  --pop-code-bg: #161824;
-  --pop-code-text: #F8FAFC;
-  --pop-chip-bg: #3D4161;
-  --pop-chip-hover: #4A4E74;
+  --pop-text-muted: #94A3B8;
+  --pop-input-bg: #0F172A;
+  --pop-code-bg: #020617;
+  --pop-code-text: #38BDF8;
+  --pop-chip-bg: #334155;
+  --pop-chip-hover: #475569;
 }
 
 body {
   background-color: var(--pop-bg);
   color: var(--pop-text);
   /* Retro Vector Pop Halftone / Ben-Day Ink Dot Matrix */
-  background-image: radial-gradient(var(--pop-dot) 2px, transparent 2px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(var(--pop-dot) 2.5px, transparent 2.5px);
+  background-size: 20px 20px;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
