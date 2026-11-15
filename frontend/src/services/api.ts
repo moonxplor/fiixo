@@ -157,6 +157,31 @@ class ApiService {
   async getGitHubStatus(): Promise<{ connected: boolean; github_username?: string }> {
     return this.request<{ connected: boolean; github_username?: string }>('/integrations/github/status');
   }
+
+  // Agent & Gemini AI
+  async queryAgent(payload: {
+    prompt: string;
+    project_id?: string;
+    conversation_history?: Array<{ role: string; text: string }>;
+    api_key?: string;
+  }): Promise<{
+    response: string;
+    model_used: string;
+    telemetry: Array<{
+      action: string;
+      tool: string;
+      reason: string;
+      result: string;
+      status: 'success' | 'running' | 'approval_required';
+      duration: string;
+    }>;
+  }> {
+    return this.request('/agent/query', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
 }
 
 export const api = new ApiService();
+

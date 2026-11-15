@@ -195,41 +195,73 @@ export function App() {
     }
   }
 
-  function handleSendPrompt(customText?: string) {
+  async function handleSendPrompt(customText?: string) {
     const textToSend = customText || prompt;
     if (!textToSend.trim()) return;
 
-    setMessages(prev => [...prev, { role: 'user', text: textToSend }]);
+    const userMessage = { role: 'user' as const, text: textToSend };
+    setMessages(prev => [...prev, userMessage]);
     if (!customText) setPrompt('');
 
     setMascotState('thinking');
 
-    setTimeout(() => {
-      setLiveEvents(prev => [
+    // Add immediate dispatch telemetry
+    setLiveEvents(prev => [
+      {
+        id: Date.now().toString(),
+        action: 'Dispatching Prompt to Agent',
+        tool: 'agent_dispatcher',
+        reason: `Processing: "${textToSend.slice(0, 45)}..."`,
+        result: 'Forwarded to Gemini AI Engine',
+        status: 'running',
+        duration: '45ms'
+      },
+      ...prev
+    ]);
+
+    try {
+      const activeProjId = projects.length > 0 ? projects[0].id : undefined;
+      const response = await api.queryAgent({
+        prompt: textToSend,
+        project_id: activeProjId,
+        conversation_history: messages.slice(-5).map(m => ({ role: m.role, text: m.text }))
+      });
+
+      setMascotState('ready');
+      setMessages(prev => [
+        ...prev,
         {
-          id: Date.now().toString(),
-          action: 'Repository Context Analysis',
-          tool: 'ast_code_analyzer',
-          reason: `Decomposing instruction: "${textToSend}"`,
-          result: 'Identified application entry points, package manifests, and outdated libraries',
-          status: 'success',
-          duration: '310ms'
-        },
-        ...prev
+          role: 'agent',
+          text: response.response,
+          details: `Model: ${response.model_used} • Live Telemetry Recorded`
+        }
       ]);
 
-      setTimeout(() => {
-        setMascotState('ready');
-        setMessages(prev => [
-          ...prev,
-          {
-            role: 'agent',
-            text: `I've analyzed your request: "${textToSend}". I examined your project structure and verified dependencies. I can prepare a safe, isolated Git branch to apply modern compatibility fixes. Would you like me to generate the diff for review?`,
-            details: 'Live Transparency: Tool scan_dependencies executed with 0 errors. Awaiting approval for file modification.'
-          }
+      if (response.telemetry && response.telemetry.length > 0) {
+        setLiveEvents(prev => [
+          ...response.telemetry.map((t, idx) => ({
+            id: `${Date.now()}_${idx}`,
+            action: t.action,
+            tool: t.tool,
+            reason: t.reason,
+            result: t.result,
+            status: t.status as 'success' | 'running' | 'approval_required',
+            duration: t.duration
+          })),
+          ...prev
         ]);
-      }, 1000);
-    }, 800);
+      }
+    } catch (err: any) {
+      setMascotState('error');
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'agent',
+          text: `⚠️ Error communicating with agent: ${err.message || 'Please check backend connection.'}`,
+          details: 'Connection error'
+        }
+      ]);
+    }
   }
 
   if (loading) {

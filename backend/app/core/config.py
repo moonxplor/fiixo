@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     GITHUB_CLIENT_SECRET: Optional[str] = Field(default=None)
     GITHUB_REDIRECT_URI: Optional[str] = Field(default=None)
     
+    # Gemini AI
+    GEMINI_API_KEY: Optional[str] = Field(default=None)
+    GEMINI_MODEL: str = Field(default="gemini-2.5-flash")
+    
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
