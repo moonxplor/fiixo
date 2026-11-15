@@ -10,28 +10,25 @@ class GeminiAgentService:
     def __init__(self):
         self._client = None
     
-    def get_client(self, api_key: Optional[str] = None):
-        key = api_key or settings.GEMINI_API_KEY or os.environ.get("GEMINI_API_KEY")
+    def get_client(self):
+        key = settings.GEMINI_API_KEY or os.environ.get("GEMINI_API_KEY")
         if not key:
             return None
         
         from google import genai
-        # Initialize Google GenAI Client with explicit or environment API key
         return genai.Client(api_key=key)
 
     async def query_agent(
         self,
         prompt: str,
         conversation_history: Optional[List[Dict[str, str]]] = None,
-        project_context: Optional[Dict[str, Any]] = None,
-        api_key: Optional[str] = None
+        project_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
-        Executes a prompt against Gemini via the modern `google-genai` SDK:
-        client = genai.Client(...)
-        response = client.models.generate_content(...)
+        Executes a prompt against Gemini via the modern `google-genai` SDK.
+        The API key is strictly loaded server-side on the backend and NEVER sent from the browser/frontend.
         """
-        client = self.get_client(api_key)
+        client = self.get_client()
         
         system_instruction = (
             "You are FIIXO, an expert AI developer companion and repository revival specialist. "
@@ -42,13 +39,13 @@ class GeminiAgentService:
         )
 
         if not client:
-            # Fallback simulated response with actionable guidance on providing an API key
             return {
                 "response": (
                     f"I received your request: \"{prompt}\".\n\n"
-                    "⚠️ To connect directly to live Gemini intelligence, set your GEMINI_API_KEY in `.env` "
-                    "or provide it in your workspace settings. In the meantime, I am running in local static "
-                    "intelligence mode: analyzing repository manifests, entry points, and dependencies safely."
+                    "⚠️ **Server-Side API Key Not Configured:**\n"
+                    "To enable live Gemini intelligence, set `GEMINI_API_KEY` on your backend server "
+                    "(in `backend/.env` locally or as an Environment Variable in Render's dashboard). "
+                    "The frontend will never ask for or store your API key."
                 ),
                 "model_used": "local-fallback-engine",
                 "telemetry": [
@@ -82,22 +79,35 @@ class GeminiAgentService:
                 f"FIIXO:"
             )
 
-            model_name = settings.GEMINI_MODEL
-            response = client.models.generate_content(
-                model=model_name,
-                contents=full_prompt
-            )
+            models_to_try = [settings.GEMINI_MODEL, "gemini-3.5-flash", "gemini-3.8-flash"]
+            text_output = None
+            last_err = None
+            model_used = settings.GEMINI_MODEL
 
-            text_output = response.text or "I processed your request, but received an empty response."
+            for model_candidate in models_to_try:
+                try:
+                    response = client.models.generate_content(
+                        model=model_candidate,
+                        contents=full_prompt
+                    )
+                    text_output = response.text
+                    model_used = model_candidate
+                    break
+                except Exception as ex:
+                    last_err = ex
+                    continue
+
+            if not text_output:
+                raise last_err or Exception("Empty response received from models.")
 
             return {
                 "response": text_output,
-                "model_used": model_name,
+                "model_used": model_used,
                 "telemetry": [
                     {
                         "action": "Gemini Content Generation",
                         "tool": "google_genai_generate_content",
-                        "reason": f"Queried model {model_name} with user prompt",
+                        "reason": f"Queried model {model_used} with user prompt",
                         "result": "Synthesized code intelligence response",
                         "status": "success",
                         "duration": "580ms"

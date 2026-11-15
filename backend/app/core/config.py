@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     
     # Gemini AI
     GEMINI_API_KEY: Optional[str] = Field(default=None)
-    GEMINI_MODEL: str = Field(default="gemini-2.5-flash")
+    GEMINI_MODEL: str = Field(default="gemini-3.5-flash")
     
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [
