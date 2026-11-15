@@ -17,23 +17,6 @@
 
 - **Render Ready:** Full `render.yaml` Blueprint with zero-downtime health checks and database migration hooks.
 
-
-##  How to Open ?
-
-### 1. Start the Backend API (FastAPI)
-In a terminal, run:
-```bash
-cd backend
-source venv/bin/activate
-uvicorn app.main:app --reload --port 8000
----
-
-### 2. Start the Frontend Workspace (React + Vite)
-In a second terminal, run:
-```bash
-cd frontend
-npm run dev
-
 ---
 
 ##  Run Automated Tests
