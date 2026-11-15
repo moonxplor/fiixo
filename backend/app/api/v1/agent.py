@@ -21,8 +21,7 @@ async def query_agent(
     
     result = await gemini_agent.query_agent(
         prompt=payload.prompt,
-        conversation_history=history_dicts,
-        api_key=payload.api_key
+        conversation_history=history_dicts
     )
     
     return result

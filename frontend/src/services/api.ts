@@ -163,7 +163,6 @@ class ApiService {
     prompt: string;
     project_id?: string;
     conversation_history?: Array<{ role: string; text: string }>;
-    api_key?: string;
   }): Promise<{
     response: string;
     model_used: string;

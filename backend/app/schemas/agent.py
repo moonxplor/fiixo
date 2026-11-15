@@ -9,7 +9,6 @@ class AgentQueryRequest(BaseModel):
     prompt: str = Field(..., description="User prompt or instruction for FIIXO")
     project_id: Optional[str] = Field(default=None, description="Optional active project ID")
     conversation_history: Optional[List[AgentMessage]] = Field(default_factory=list)
-    api_key: Optional[str] = Field(default=None, description="Optional user-provided Gemini API key")
 
 class TelemetryEvent(BaseModel):
     action: str
