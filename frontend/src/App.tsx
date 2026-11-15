@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
@@ -64,11 +64,6 @@ export function App() {
       details: 'Agent is ready to inspect repositories, trace execution flow, and restore dependencies.'
     }
   ]);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, mascotState]);
 
   // Live Telemetry Event Feed
   const [liveEvents, setLiveEvents] = useState<Array<{
@@ -565,7 +560,6 @@ export function App() {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Action Suggestion Burst Chips & Input Bar */}
@@ -609,20 +603,20 @@ export function App() {
         </main>
 
         {/* Right Panel: Live Agent Telemetry & Transparency */}
-        <aside className="w-80 pop-card flex flex-col p-5 hidden lg:flex justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-5 pb-3 border-b-3 border-[#111827]">
+        <aside className="w-80 flex-shrink-0 pop-card flex flex-col p-4 hidden lg:flex justify-between overflow-hidden">
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-3 pb-2.5 border-b-3 border-[#111827] flex-shrink-0">
               <h2 className="font-pop-title text-xs tracking-wider text-[var(--pop-text)] flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-[#FF3366]" /> LIVE TELEMETRY
               </h2>
               <span className="w-3 h-3 rounded-full bg-[#00E676] border-2 border-[#111827] animate-ping" />
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3.5 pr-1">
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 min-h-0">
               {liveEvents.map(event => (
                 <div 
                   key={event.id}
-                  className="p-3.5 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl text-xs space-y-1.5 shadow-[3px_3px_0px_#111827]"
+                  className="p-3 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl text-xs space-y-1.5 shadow-[3px_3px_0px_#111827]"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-black text-[var(--pop-text)]">{event.action}</span>
@@ -649,7 +643,7 @@ export function App() {
           </div>
 
           {/* Transparency Guarantee Sticker */}
-          <div className="mt-4 p-3.5 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl shadow-[3px_3px_0px_#111827] text-xs text-[var(--pop-text)] leading-relaxed">
+          <div className="mt-3 p-3 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl shadow-[3px_3px_0px_#111827] text-xs text-[var(--pop-text)] leading-relaxed flex-shrink-0">
             <span className="font-pop-title text-[var(--pop-text)] block mb-0.5 text-xs">TRANSPARENCY RULE:</span>
             Zero silent code modifications. Every tool, diff, and verification step is recorded.
           </div>
