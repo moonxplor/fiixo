@@ -632,6 +632,15 @@ export function App() {
                 </div>
               </div>
             ))}
+            {mascotState === 'thinking' && (
+              <div className="flex gap-3 max-w-xl items-center animate-pulse">
+                <Mascot state="thinking" size="sm" className="flex-shrink-0" />
+                <div className="p-3.5 rounded-2xl border-3 border-[#111827] bg-[var(--pop-card-inner)] text-xs font-black text-[#00D2FF] shadow-[2px_2px_0px_#111827] flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#00D2FF] animate-ping" />
+                  <span>FIIXO is reading repository context & generating response...</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Suggestion Burst Chips & Input Bar */}
