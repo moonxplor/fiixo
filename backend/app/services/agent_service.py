@@ -79,10 +79,15 @@ class GeminiAgentService:
                 f"FIIXO:"
             )
 
-            models_to_try = [settings.GEMINI_MODEL, "gemini-3.5-flash", "gemini-3.8-flash"]
+            models_to_try = [
+                "gemini-3.5-flash-lite",
+                settings.GEMINI_MODEL,
+                "gemini-3.5-flash",
+                "gemini-3.8-flash"
+            ]
             text_output = None
             last_err = None
-            model_used = settings.GEMINI_MODEL
+            model_used = "gemini-3.5-flash-lite"
 
             for model_candidate in models_to_try:
                 try:
@@ -95,6 +100,7 @@ class GeminiAgentService:
                     break
                 except Exception as ex:
                     last_err = ex
+                    logger.warning(f"Model {model_candidate} failed with: {ex}. Falling back...")
                     continue
 
             if not text_output:

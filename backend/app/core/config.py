@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(default="fiixo_dev_super_secret_master_key_change_in_production_32b_min", description="Secret key for JWT generation")
     ENCRYPTION_KEY: str = Field(default="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", description="64-char hex key for AES-256 token encryption")
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # Database

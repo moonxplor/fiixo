@@ -90,6 +90,11 @@ class ApiService {
       return {} as T;
     }
 
+    if (response.status === 401 && endpoint !== '/auth/login') {
+      this.setToken(null);
+      throw new Error('Your session has expired. Please sign in again.');
+    }
+
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.detail || 'API request failed');
