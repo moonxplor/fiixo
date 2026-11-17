@@ -3,15 +3,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
   FolderGit2, 
-  Terminal, 
-  Sparkles, 
   LogOut, 
   Plus, 
-  CheckCircle2, 
-  AlertCircle, 
-  Clock, 
   ArrowRight,
-  Code2,
   Sun,
   Moon,
   FileText,
@@ -20,7 +14,9 @@ import {
   RefreshCw,
   ChevronDown,
   FlaskConical,
-  BookOpen
+  BookOpen,
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 import { Mascot, MascotState } from './components/Mascot';
 import { api, User, Workspace, Project } from './services/api';
@@ -33,9 +29,9 @@ export function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Retro Vector Pop Theme: 'light' (white background with halftone dots) or 'dark' (slate-grey background)
+  // Project Agent Studio Theme: default 'dark'
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('fiixo_theme') as 'light' | 'dark') || 'light';
+    return (localStorage.getItem('fiixo_theme') as 'light' | 'dark') || 'dark';
   });
 
   useEffect(() => {
@@ -55,9 +51,9 @@ export function App() {
   
   // Auth Form State
   const [isRegister, setIsRegister] = useState(false);
-  const [authEmail, setAuthEmail] = useState('developer@fiixo.io');
+  const [authEmail, setAuthEmail] = useState('sahasnigdha654@gmail.com');
   const [authPassword, setAuthPassword] = useState('Password123!');
-  const [authName, setAuthName] = useState('Dev Explorer');
+  const [authName, setAuthName] = useState('moonxplor');
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Studio Agent Mode & Knowledge Base State
@@ -71,40 +67,28 @@ export function App() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'agent'; text: string; details?: string }>>([
     {
       role: 'agent',
-      text: "No repository description provided.\n\n### File Structure Preview (`REPO_SUMMARY.md`)\n* `.env.example`\n* `.gitignore`\n* `README.md`\n* `backend/alembic.ini`\n* `backend/alembic/README`\n* `backend/app/main.py`\n* `backend/app/api/deps.py`\n* `backend/app/api/v1/auth.py`\n* `backend/app/api/v1/agent.py`\n* `backend/app/services/agent_service.py`\n* `frontend/src/App.tsx`\n* `frontend/package.json`\n\nAsk anything about the selected project or click one of the quick inquiry pills below.",
-      details: 'Connected to Gemini API • Knowledge Base Synced'
+      text: `No repository description provided.
+
+### File Structure Preview (REPO_SUMMARY.md)
+* .env.example
+* .gitignore
+* README.md
+* backend/alembic.ini
+* backend/alembic/README
+* backend/alembic/__pycache__/env.cpython-314.pyc
+* backend/alembic/env.py
+* backend/alembic/script.py.mako
+* backend/alembic/versions/__pycache__/bd4e344e5a5e_initial_schema.cpython-314.pyc
+* backend/alembic/versions/bd4e344e5a5e_initial_schema.py
+* backend/app/__pycache__/main.cpython-314.pyc
+* backend/app/api/__pycache__/deps.cpython-314.pyc
+* backend/app/api/deps.py
+* backend/app/api/v1/__init__.py
+* backend/app/api/v1/__pycache__/__init__.cpython-314.pyc
+* backend/app/api/v1/__pycache__/auth.cpython-314.pyc`
     }
   ]);
 
-  // Live Telemetry Event Feed
-  const [liveEvents, setLiveEvents] = useState<Array<{
-    id: string;
-    action: string;
-    tool: string;
-    reason: string;
-    result: string;
-    status: 'success' | 'running' | 'approval_required';
-    duration: string;
-  }>>([
-    {
-      id: '1',
-      action: 'Tenant Isolation Initialized',
-      tool: 'rbac_resolver',
-      reason: 'Enforcing PostgreSQL Row-Level Security for current workspace',
-      result: 'Verified 0 cross-tenant data leaks',
-      status: 'success',
-      duration: '42ms'
-    },
-    {
-      id: '2',
-      action: 'AST Engine Ready',
-      tool: 'tree_sitter_parser',
-      reason: 'Preparing static abstract syntax tree analysis for Python 3.14 migration',
-      result: 'Parsers active for Python, JS/TS, Go',
-      status: 'success',
-      duration: '118ms'
-    }
-  ]);
 
   // Project Creation Modal State
   const [showNewProject, setShowNewProject] = useState(false);
@@ -194,19 +178,6 @@ export function App() {
       setShowNewProject(false);
       setNewProjectName('');
       setNewRepoUrl('');
-      
-      setLiveEvents(prev => [
-        {
-          id: Date.now().toString(),
-          action: `Repository Linked: ${newProjectName}`,
-          tool: 'git_shallow_cloner',
-          reason: 'Cloning repo manifest for static structure evaluation',
-          result: 'Manifest inspected safely',
-          status: 'success',
-          duration: '620ms'
-        },
-        ...prev
-      ]);
     } catch (err: any) {
       alert(err.message || 'Failed to create project');
     }
@@ -215,32 +186,8 @@ export function App() {
   async function handleSyncRepo() {
     if (!selectedProject) return;
     setIsSyncing(true);
-    setLiveEvents(prev => [
-      {
-        id: Date.now().toString(),
-        action: `Syncing ${selectedProject.name}`,
-        tool: 'git_knowledge_sync',
-        reason: 'Scanning repo commit tree, branches, and AST manifests',
-        result: 'Knowledge base updated with latest files',
-        status: 'running',
-        duration: '120ms'
-      },
-      ...prev
-    ]);
     setTimeout(() => {
       setIsSyncing(false);
-      setLiveEvents(prev => [
-        {
-          id: Date.now().toString(),
-          action: `Sync Complete: ${selectedProject.name}`,
-          tool: 'git_knowledge_sync',
-          reason: '3 documentation entries indexed to memory cache',
-          result: 'Synced (0 warnings)',
-          status: 'success',
-          duration: '340ms'
-        },
-        ...prev
-      ]);
     }, 1200);
   }
 
@@ -249,8 +196,7 @@ export function App() {
     setMessages([
       {
         role: 'agent',
-        text: `### Active Project: ${selectedProject.name}\n\n**Repository:** \`${selectedProject.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject.default_branch}\`\n\nNo repository description provided.\n\n### File Structure Preview (\`REPO_SUMMARY.md\`)\n* \`.env.example\`\n* \`.gitignore\`\n* \`README.md\`\n* \`backend/alembic.ini\`\n* \`backend/alembic/env.py\`\n* \`backend/app/main.py\`\n* \`backend/app/api/v1/agent.py\`\n* \`frontend/src/App.tsx\`\n\nAsk anything about the selected project...`,
-        details: 'Knowledge Base Cleaned & Ready'
+        text: `### Active Project: ${selectedProject.name}\n\n**Repository:** \`${selectedProject.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject.default_branch}\`\n\nNo repository description provided.\n\n### File Structure Preview (\`REPO_SUMMARY.md\`)\n* \`.env.example\`\n* \`.gitignore\`\n* \`README.md\`\n* \`backend/alembic.ini\`\n* \`backend/alembic/env.py\`\n* \`backend/app/main.py\`\n* \`backend/app/api/v1/agent.py\`\n* \`frontend/src/App.tsx\`\n\nAsk anything about the selected project...`
       }
     ]);
   }
@@ -275,20 +221,6 @@ export function App() {
     if (!customText) setPrompt('');
 
     setMascotState('thinking');
-
-    // Add immediate dispatch telemetry
-    setLiveEvents(prev => [
-      {
-        id: Date.now().toString(),
-        action: 'Dispatching Prompt to Agent',
-        tool: 'agent_dispatcher',
-        reason: `Processing: "${textToSend.slice(0, 45)}..."`,
-        result: 'Forwarded to Gemini AI Engine',
-        status: 'running',
-        duration: '45ms'
-      },
-      ...prev
-    ]);
 
     try {
       const activeProjId = selectedProject ? selectedProject.id : (projects.length > 0 ? projects[0].id : undefined);
@@ -315,33 +247,16 @@ export function App() {
         ...prev,
         {
           role: 'agent',
-          text: response.response,
-          details: `Model: ${response.model_used} • Live Telemetry Recorded`
+          text: response.response
         }
       ]);
-
-      if (response.telemetry && response.telemetry.length > 0) {
-        setLiveEvents(prev => [
-          ...response.telemetry.map((t, idx) => ({
-            id: `${Date.now()}_${idx}`,
-            action: t.action,
-            tool: t.tool,
-            reason: t.reason,
-            result: t.result,
-            status: t.status as 'success' | 'running' | 'approval_required',
-            duration: t.duration
-          })),
-          ...prev
-        ]);
-      }
     } catch (err: any) {
       setMascotState('error');
       setMessages(prev => [
         ...prev,
         {
           role: 'agent',
-          text: `⚠️ Error communicating with agent: ${err.message || 'Please check backend connection.'}`,
-          details: 'Connection error'
+          text: `⚠️ Error communicating with agent: ${err.message || 'Please check backend connection.'}`
         }
       ]);
     }
@@ -664,46 +579,32 @@ export function App() {
         </aside>
 
         {/* Center Main Studio Conversation & Code Surface */}
-        <main className="flex-1 min-w-0 flex flex-col justify-between overflow-hidden bg-[var(--pop-bg)] px-6 py-4">
+        <main className="flex-1 min-w-0 flex flex-col justify-between overflow-hidden bg-[var(--pop-bg)] px-8 py-4">
           
-          {/* Conversation Stream: Markdown file structure preview & messages */}
-          <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-3">
+          {/* Conversation Stream: Clean Markdown file structure preview & messages */}
+          <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-2">
             {messages.map((m, idx) => (
               <div 
                 key={idx}
-                className={`flex gap-3 max-w-4xl ${m.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                className={`max-w-4xl ${m.role === 'user' ? 'ml-auto flex justify-end' : ''}`}
               >
-                {m.role === 'agent' && (
-                  <div className="w-8 h-8 rounded-lg bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center text-emerald-400 flex-shrink-0 mt-0.5">
-                    <FlaskConical className="w-4 h-4" />
-                  </div>
-                )}
-                <div 
-                  className={`p-4 rounded-xl text-sm leading-relaxed overflow-x-auto border ${
-                    m.role === 'user' 
-                      ? 'bg-emerald-600 text-white font-medium border-emerald-500' 
-                      : 'bg-[#121926] text-gray-200 border-[#1E293B]'
-                  }`}
-                >
-                  {m.role === 'user' ? (
+                {m.role === 'user' ? (
+                  <div className="p-3.5 px-4 rounded-2xl bg-emerald-600 text-white font-medium text-sm max-w-xl">
                     <p className="whitespace-pre-wrap">{m.text}</p>
-                  ) : (
+                  </div>
+                ) : (
+                  <div className="text-gray-200 text-sm leading-relaxed">
                     <div className="markdown-body">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {m.text}
                       </ReactMarkdown>
                     </div>
-                  )}
-                  {m.details && (
-                    <div className="mt-2.5 pt-2 border-t border-[#1E293B] text-[11px] text-gray-400 flex items-center gap-1.5 font-mono">
-                      <Code2 className="w-3.5 h-3.5 text-emerald-400" /> {m.details}
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             ))}
             {mascotState === 'thinking' && (
-              <div className="flex gap-3 max-w-xl items-center animate-pulse">
+              <div className="flex gap-3 max-w-xl items-center animate-pulse pt-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center text-emerald-400 flex-shrink-0">
                   <FlaskConical className="w-4 h-4" />
                 </div>
@@ -759,53 +660,6 @@ export function App() {
             </p>
           </div>
         </main>
-
-        {/* Right Panel: Live Agent Telemetry & Transparency */}
-        <aside className="w-80 flex-shrink-0 pop-card flex flex-col p-4 hidden lg:flex justify-between overflow-hidden">
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="flex items-center justify-between mb-3 pb-2.5 border-b-3 border-[#111827] flex-shrink-0">
-              <h2 className="font-pop-title text-xs tracking-wider text-[var(--pop-text)] flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#FF3366]" /> LIVE TELEMETRY
-              </h2>
-              <span className="w-3 h-3 rounded-full bg-[#00E676] border-2 border-[#111827] animate-ping" />
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1 min-h-0">
-              {liveEvents.map(event => (
-                <div 
-                  key={event.id}
-                  className="p-3 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl text-xs space-y-1.5 shadow-[3px_3px_0px_#111827]"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-black text-[var(--pop-text)]">{event.action}</span>
-                    <span className="text-[10px] bg-[var(--pop-card)] border border-[#111827] text-[var(--pop-text)] font-mono px-1.5 py-0.5 rounded flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> {event.duration}
-                    </span>
-                  </div>
-
-                  <div className="bg-[var(--pop-code-bg)] p-2 rounded-xl border border-[#111827] font-mono text-[11px] text-[#00D2FF]">
-                    <span className="text-gray-400 font-bold">TOOL:</span> {event.tool}
-                  </div>
-
-                  <p className="text-[11px] text-[var(--pop-text)] leading-relaxed font-semibold">
-                    <span className="font-bold text-[var(--pop-text-muted)]">WHY:</span> {event.reason}
-                  </p>
-
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#00E676] font-black">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00E676]" />
-                    <span>{event.result}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Transparency Guarantee Sticker */}
-          <div className="mt-3 p-3 bg-[var(--pop-card-inner)] border-3 border-[#111827] rounded-2xl shadow-[3px_3px_0px_#111827] text-xs text-[var(--pop-text)] leading-relaxed flex-shrink-0">
-            <span className="font-pop-title text-[var(--pop-text)] block mb-0.5 text-xs">TRANSPARENCY RULE:</span>
-            Zero silent code modifications. Every tool, diff, and verification step is recorded.
-          </div>
-        </aside>
       </div>
 
       {/* Knowledge Base Modal */}
