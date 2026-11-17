@@ -5,13 +5,11 @@ import {
   FolderGit2, 
   Terminal, 
   Sparkles, 
-  ShieldCheck, 
   LogOut, 
   Plus, 
   CheckCircle2, 
   AlertCircle, 
   Clock, 
-  Layers, 
   ArrowRight,
   Code2,
   Sun,
@@ -21,7 +19,6 @@ import {
   Trash2,
   RefreshCw,
   ChevronDown,
-  Check,
   FlaskConical,
   BookOpen
 } from 'lucide-react';
@@ -30,7 +27,7 @@ import { api, User, Workspace, Project } from './services/api';
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [, setWorkspaces] = useState<Workspace[]>([]);
   const [activeWorkspace, setActiveWorkspace] = useState<Workspace | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -811,32 +808,90 @@ export function App() {
         </aside>
       </div>
 
+      {/* Knowledge Base Modal */}
+      {showKnowledgeBase && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-xl bg-[#121926] border border-[#232F48] rounded-2xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#232F48] mb-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-bold text-base text-white">Repository Knowledge Base</h3>
+                <span className="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono">
+                  3 docs indexed
+                </span>
+              </div>
+              <button
+                onClick={() => setShowKnowledgeBase(false)}
+                className="text-gray-400 hover:text-white p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-400 mb-4">
+              These files are continuously indexed to provide project-specific answers, AST mappings, and architecture definitions.
+            </p>
+
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              {[
+                { name: 'REPO_SUMMARY.md', type: 'Architecture & File Structure', size: '1.4 KB', synced: 'Just now' },
+                { name: 'DEPENDENCIES.lock', type: 'Package Manifests & Deprecations', size: '3.8 KB', synced: '2m ago' },
+                { name: 'AST_INDEX.json', type: 'Tree-sitter Syntax Graph', size: '12.1 KB', synced: '5m ago' },
+              ].map((doc, idx) => (
+                <div key={idx} className="p-3 bg-[#162032] border border-[#232F48] rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <div>
+                      <span className="font-mono text-xs text-white block">{doc.name}</span>
+                      <span className="text-[11px] text-gray-400 block">{doc.type}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-emerald-400 font-mono block">Synced</span>
+                    <span className="text-[10px] text-gray-400 font-mono block">{doc.size}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex justify-end gap-2.5">
+              <button
+                onClick={() => setShowKnowledgeBase(false)}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* New Project Modal */}
       {showNewProject && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md pop-card p-6">
-            <h3 className="font-pop-title text-xl text-[var(--pop-text)] mb-1">IMPORT REPOSITORY</h3>
-            <p className="text-xs font-semibold text-[var(--pop-text-muted)] mb-4">Connect a GitHub repository or paste a public clone URL to revive.</p>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#121926] border border-[#232F48] rounded-2xl p-6 shadow-2xl">
+            <h3 className="font-bold text-lg text-white mb-1">IMPORT REPOSITORY</h3>
+            <p className="text-xs text-gray-400 mb-4">Connect a GitHub repository or paste a public clone URL to revive.</p>
 
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-[var(--pop-text)] mb-1">Project Name</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1">Project Name</label>
                 <input
                   type="text"
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--pop-input-bg)] border-3 border-[#111827] text-[var(--pop-text)] text-sm font-bold focus:outline-none focus:border-[#00D2FF]"
-                  placeholder="e.g. my-legacy-api"
+                  className="w-full px-3.5 py-2 rounded-xl bg-[#162032] border border-[#232F48] text-white text-sm font-medium focus:outline-none focus:border-emerald-500"
+                  placeholder="e.g. Dodo AI"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-[var(--pop-text)] mb-1">Repository Clone URL</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1">Repository Clone URL</label>
                 <input
                   type="text"
                   value={newRepoUrl}
                   onChange={(e) => setNewRepoUrl(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--pop-input-bg)] border-3 border-[#111827] text-[var(--pop-text)] text-sm font-bold focus:outline-none focus:border-[#00D2FF]"
+                  className="w-full px-3.5 py-2 rounded-xl bg-[#162032] border border-[#232F48] text-white text-sm font-medium focus:outline-none focus:border-emerald-500"
                   placeholder="https://github.com/username/project.git"
                 />
               </div>
@@ -845,13 +900,13 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => setShowNewProject(false)}
-                  className="flex-1 py-2.5 border-3 border-[#111827] bg-[var(--pop-card-inner)] text-xs font-black text-[var(--pop-text)] rounded-xl hover:bg-[var(--pop-card-alt)] transition"
+                  className="flex-1 py-2 border border-[#232F48] bg-[#162032] text-xs font-bold text-gray-300 rounded-xl hover:bg-[#1E293B] transition"
                 >
                   CANCEL
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 pop-btn-pink text-xs font-pop-title tracking-wider uppercase"
+                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition"
                 >
                   IMPORT REPO
                 </button>
