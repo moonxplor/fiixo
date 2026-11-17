@@ -22,3 +22,4 @@ class AgentQueryResponse(BaseModel):
     response: str
     model_used: str
     telemetry: List[TelemetryEvent]
+    updated_recovery_status: Optional[str] = None

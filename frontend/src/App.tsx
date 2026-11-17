@@ -25,6 +25,7 @@ export function App() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [activeWorkspace, setActiveWorkspace] = useState<Workspace | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Retro Vector Pop Theme: 'light' (white background with halftone dots) or 'dark' (slate-grey background)
@@ -125,8 +126,12 @@ export function App() {
     try {
       const projs = await api.listProjects(workspaceId);
       setProjects(projs);
+      if (projs.length > 0 && !selectedProject) {
+        setSelectedProject(projs[0]);
+      }
     } catch {
       setProjects([]);
+      setSelectedProject(null);
     }
   }
 
@@ -222,12 +227,24 @@ export function App() {
     ]);
 
     try {
-      const activeProjId = projects.length > 0 ? projects[0].id : undefined;
+      const activeProjId = selectedProject ? selectedProject.id : (projects.length > 0 ? projects[0].id : undefined);
+      
+      // Immediately reflect recovery status change from not_started to analyzing
+      if (selectedProject && selectedProject.recovery_status === 'not_started') {
+        setSelectedProject(prev => prev ? { ...prev, recovery_status: 'analyzing' } : null);
+        setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, recovery_status: 'analyzing' } : p));
+      }
+
       const response = await api.queryAgent({
         prompt: textToSend,
         project_id: activeProjId,
         conversation_history: messages.slice(-5).map(m => ({ role: m.role, text: m.text }))
       });
+
+      if (response.updated_recovery_status && activeProjId) {
+        setSelectedProject(prev => prev && prev.id === activeProjId ? { ...prev, recovery_status: response.updated_recovery_status! } : prev);
+        setProjects(prev => prev.map(p => p.id === activeProjId ? { ...p, recovery_status: response.updated_recovery_status! } : p));
+      }
 
       setMascotState('ready');
       setMessages(prev => [
@@ -492,28 +509,63 @@ export function App() {
                   </button>
                 </div>
               ) : (
-                projects.map(proj => (
-                  <div 
-                    key={proj.id}
-                    className="p-3 bg-[var(--pop-card-inner)] hover:bg-[var(--pop-card-alt)] border-3 border-[#111827] rounded-2xl cursor-pointer shadow-[3px_3px_0px_#111827] transition"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-black text-xs text-[var(--pop-text)] truncate">{proj.name}</span>
-                      <span className="text-[10px] bg-[var(--pop-card)] border border-[#111827] text-[var(--pop-text)] px-2 py-0.5 rounded-lg font-mono">
-                        {proj.default_branch}
-                      </span>
+                projects.map(proj => {
+                  const isSelected = selectedProject?.id === proj.id;
+                  const statusColors: Record<string, { bg: string; dot: string; text: string }> = {
+                    not_started: { bg: 'bg-zinc-800', dot: 'bg-zinc-400', text: 'NOT STARTED' },
+                    analyzing: { bg: 'bg-[#00D2FF]/20', dot: 'bg-[#00D2FF]', text: 'ANALYZING' },
+                    restoring: { bg: 'bg-[#FF3366]/20', dot: 'bg-[#FF3366]', text: 'REPAIRING' },
+                    active: { bg: 'bg-[#00E676]/20', dot: 'bg-[#00E676]', text: 'ACTIVE' },
+                  };
+                  const statusInfo = statusColors[proj.recovery_status] || statusColors.not_started;
+
+                  return (
+                    <div 
+                      key={proj.id}
+                      onClick={() => {
+                        setSelectedProject(proj);
+                        setMessages(prev => [
+                          ...prev,
+                          {
+                            role: 'agent',
+                            text: `Switched active repository to **${proj.name}** (${proj.default_branch}). Ready to explore architecture, restore dependencies, or generate compatibility fixes.`,
+                            details: `Repo: ${proj.repository?.clone_url || 'local'}`
+                          }
+                        ]);
+                      }}
+                      className={`p-3 rounded-2xl cursor-pointer transition relative ${
+                        isSelected 
+                          ? 'bg-[var(--pop-card-alt)] border-3 border-[#00D2FF] shadow-[4px_4px_0px_#00D2FF]' 
+                          : 'bg-[var(--pop-card-inner)] hover:bg-[var(--pop-card-alt)] border-3 border-[#111827] shadow-[3px_3px_0px_#111827]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-black text-xs text-[var(--pop-text)] truncate">{proj.name}</span>
+                        <span className="text-[10px] bg-[var(--pop-card)] border border-[#111827] text-[var(--pop-text)] px-2 py-0.5 rounded-lg font-mono">
+                          {proj.default_branch}
+                        </span>
+                      </div>
+                      {proj.repository && (
+                        <p className="text-[11px] text-[var(--pop-text-muted)] truncate mt-1 font-mono">
+                          {proj.repository.clone_url}
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#111827]/40">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`w-2 h-2 rounded-full ${statusInfo.dot} animate-pulse`} />
+                          <span className="text-[9px] text-[var(--pop-text)] uppercase font-black tracking-wide">
+                            {statusInfo.text}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <span className="text-[9px] bg-[#00D2FF] text-[#111827] px-1.5 py-0.5 rounded font-black">
+                            SELECTED
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    {proj.repository && (
-                      <p className="text-[11px] text-[var(--pop-text-muted)] truncate mt-1 font-mono">
-                        {proj.repository.clone_url}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-1.5 mt-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#00D2FF] border border-[#111827]" />
-                      <span className="text-[10px] text-[var(--pop-text)] uppercase font-black tracking-wide">{proj.recovery_status.replace('_', ' ')}</span>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
@@ -528,6 +580,26 @@ export function App() {
         {/* Center Panel: Conversational AI Agent Comic Panel */}
         <main className="flex-1 min-w-0 pop-card flex flex-col p-4 sm:p-5 overflow-hidden justify-between">
           
+          {/* Active Session & Repo Status Header */}
+          <div className="flex items-center justify-between pb-2.5 mb-3 border-b-3 border-[#111827] flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <span className={`w-2.5 h-2.5 rounded-full ${selectedProject?.recovery_status === 'not_started' ? 'bg-zinc-400' : 'bg-[#00E676]'} border border-[#111827] animate-pulse`} />
+              <span className="font-pop-title text-xs text-[var(--pop-text)] tracking-wider">
+                {selectedProject ? `REPO: ${selectedProject.name.toUpperCase()}` : 'SELECT A REPOSITORY'}
+              </span>
+            </div>
+            {selectedProject && (
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] bg-[var(--pop-card-inner)] border border-[#111827] px-2 py-0.5 rounded-lg text-[var(--pop-text)]">
+                  BRANCH: {selectedProject.default_branch}
+                </span>
+                <span className="text-[10px] bg-[#00D2FF] text-[#111827] font-black px-2 py-0.5 rounded-lg border border-[#111827] uppercase">
+                  {selectedProject.recovery_status.replace('_', ' ')}
+                </span>
+              </div>
+            )}
+          </div>
+
           {/* Conversation Stream: Auto-scrolling and Formatted Markdown */}
           <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-2">
             {messages.map((m, idx) => (

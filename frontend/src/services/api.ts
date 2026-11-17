@@ -174,6 +174,7 @@ class ApiService {
       status: 'success' | 'running' | 'approval_required';
       duration: string;
     }>;
+    updated_recovery_status?: string;
   }> {
     return this.request('/agent/query', {
       method: 'POST',
