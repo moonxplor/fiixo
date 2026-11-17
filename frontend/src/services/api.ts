@@ -163,7 +163,7 @@ class ApiService {
     return this.request<{ connected: boolean; github_username?: string }>('/integrations/github/status');
   }
 
-  // Agent & Gemini AI
+  // Agent Service
   async queryAgent(payload: {
     prompt: string;
     project_id?: string;

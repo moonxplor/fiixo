@@ -33,6 +33,7 @@ class GeminiAgentService:
         system_instruction = (
             "You are FIIXO, an expert AI developer companion and repository revival specialist. "
             "Your philosophy: 'Understand. Explain. Repair. Teach.'\n"
+            "CRITICAL FORMATTING RULE: Never use any emojis or emoticons in your answers. Only use clean technical prose, code blocks, and markdown.\n"
             "You help developers revive old/broken codebases, upgrade deprecated APIs, explain architecture, "
             "and suggest safe, verified code changes. Always be concise, clear, and proactive. "
             "When proposing code changes, provide precise unified diffs and explain the reason behind every modernization."
@@ -42,7 +43,7 @@ class GeminiAgentService:
             return {
                 "response": (
                     f"I received your request: \"{prompt}\".\n\n"
-                    "⚠️ **Server-Side API Key Not Configured:**\n"
+                    "**[Warning] Server-Side API Key Not Configured:**\n"
                     "To enable live Gemini intelligence, set `GEMINI_API_KEY` on your backend server "
                     "(in `backend/.env` locally or as an Environment Variable in Render's dashboard). "
                     "The frontend will never ask for or store your API key."

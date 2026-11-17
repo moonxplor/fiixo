@@ -16,7 +16,8 @@ import {
   FlaskConical,
   BookOpen,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 import { Mascot, MascotState } from './components/Mascot';
 import { api, User, Workspace, Project } from './services/api';
@@ -64,28 +65,48 @@ export function App() {
   // Agent State & Prompt
   const [mascotState, setMascotState] = useState<MascotState>('ready');
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'agent'; text: string; details?: string }>>([
+  
+  // Per-project isolated conversations (stored in memory & localStorage)
+  const defaultFiixoWelcome: Array<{ role: 'user' | 'agent'; text: string; details?: string }> = [
     {
       role: 'agent',
-      text: `No repository description provided.
+      text: `Welcome to **Fiixo** — your developer companion and legacy repository revival agent.
 
-### File Structure Preview (REPO_SUMMARY.md)
-* .env.example
-* .gitignore
-* README.md
-* backend/alembic.ini
-* backend/alembic/README
-* backend/alembic/__pycache__/env.cpython-314.pyc
-* backend/alembic/env.py
-* backend/alembic/script.py.mako
-* backend/alembic/versions/__pycache__/bd4e344e5a5e_initial_schema.cpython-314.pyc
-* backend/alembic/versions/bd4e344e5a5e_initial_schema.py
-* backend/app/__pycache__/main.cpython-314.pyc
-* backend/app/api/__pycache__/deps.cpython-314.pyc
-* backend/app/api/deps.py
-* backend/app/api/v1/__init__.py
-* backend/app/api/v1/__pycache__/__init__.cpython-314.pyc
-* backend/app/api/v1/__pycache__/auth.cpython-314.pyc`
+### Active Repository: \`moonxplor/fiixo\`
+* \`README.md\` — Fiixo architecture & agent orchestration specification
+* \`backend/app/main.py\` — Backend service entry point & router
+* \`backend/app/services/agent_service.py\` — Multi-model code intelligence reasoning agent
+* \`backend/app/api/v1/agent.py\` — Repository inquiry & conversational intelligence engine
+* \`backend/app/api/v1/auth.py\` — User authentication & session controller
+* \`frontend/src/App.tsx\` — Studio dashboard & repository interface
+
+Ask anything about **Fiixo**, its architecture, tech stack, or click one of the inquiry options below.`
+    }
+  ];
+
+  const [projectChats, setProjectChats] = useState<Record<string, Array<{ role: 'user' | 'agent'; text: string; details?: string }>>>(() => {
+    try {
+      const saved = localStorage.getItem('fiixo_repo_chats');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  // Save repo chats to localStorage on changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('fiixo_repo_chats', JSON.stringify(projectChats));
+    } catch (e) {
+      console.error('Failed to save project chats to localStorage', e);
+    }
+  }, [projectChats]);
+
+  // Current active repository messages
+  const currentMessages = (selectedProject && projectChats[selectedProject.id]) || (selectedProject?.name === 'fiixo' ? defaultFiixoWelcome : [
+    {
+      role: 'agent' as const,
+      text: `### Active Project: **${selectedProject?.name || 'Selected Repository'}**\n\n**Repository:** \`${selectedProject?.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject?.default_branch || 'main'}\`\n**Language:** \`${selectedProject?.primary_language || 'Auto-detect'}\`\n\nThis is a dedicated chat session for **${selectedProject?.name || 'this repository'}**. Ask anything about this codebase, architecture, setup steps, or click one of the quick inquiry options below.`
     }
   ]);
 
@@ -193,16 +214,20 @@ export function App() {
 
   function handleClearChat() {
     if (!selectedProject) return;
-    setMessages([
+    const freshChat = [
       {
-        role: 'agent',
-        text: `### Active Project: ${selectedProject.name}\n\n**Repository:** \`${selectedProject.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject.default_branch}\`\n\nNo repository description provided.\n\n### File Structure Preview (\`REPO_SUMMARY.md\`)\n* \`.env.example\`\n* \`.gitignore\`\n* \`README.md\`\n* \`backend/alembic.ini\`\n* \`backend/alembic/env.py\`\n* \`backend/app/main.py\`\n* \`backend/app/api/v1/agent.py\`\n* \`frontend/src/App.tsx\`\n\nAsk anything about the selected project...`
+        role: 'agent' as const,
+        text: `### Active Project: **${selectedProject.name}**\n\n**Repository:** \`${selectedProject.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject.default_branch}\`\n**Language:** \`${selectedProject.primary_language || 'Auto-detect'}\`\n\nChat session cleared for **${selectedProject.name}**. Ask anything about this repository...`
       }
-    ]);
+    ];
+    setProjectChats(prev => ({
+      ...prev,
+      [selectedProject.id]: freshChat
+    }));
   }
 
   function handleExportChat() {
-    const chatText = messages.map(m => `${m.role.toUpperCase()}:\n${m.text}\n\n`).join('---\n');
+    const chatText = currentMessages.map(m => `${m.role.toUpperCase()}:\n${m.text}\n\n`).join('---\n');
     const blob = new Blob([chatText], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -214,19 +239,25 @@ export function App() {
 
   async function handleSendPrompt(customText?: string) {
     const textToSend = customText || prompt;
-    if (!textToSend.trim()) return;
+    if (!textToSend.trim() || !selectedProject) return;
 
     const userMessage = { role: 'user' as const, text: textToSend };
-    setMessages(prev => [...prev, userMessage]);
-    if (!customText) setPrompt('');
+    const updatedMessages = [...currentMessages, userMessage];
 
+    // Optimistically update the selected project's chat
+    setProjectChats(prev => ({
+      ...prev,
+      [selectedProject.id]: updatedMessages
+    }));
+
+    if (!customText) setPrompt('');
     setMascotState('thinking');
 
     try {
-      const activeProjId = selectedProject ? selectedProject.id : (projects.length > 0 ? projects[0].id : undefined);
+      const activeProjId = selectedProject.id;
       
       // Immediately reflect recovery status change from not_started to analyzing
-      if (selectedProject && selectedProject.recovery_status === 'not_started') {
+      if (selectedProject.recovery_status === 'not_started') {
         setSelectedProject(prev => prev ? { ...prev, recovery_status: 'analyzing' } : null);
         setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, recovery_status: 'analyzing' } : p));
       }
@@ -234,7 +265,7 @@ export function App() {
       const response = await api.queryAgent({
         prompt: textToSend,
         project_id: activeProjId,
-        conversation_history: messages.slice(-5).map(m => ({ role: m.role, text: m.text }))
+        conversation_history: updatedMessages.slice(-5).map(m => ({ role: m.role, text: m.text }))
       });
 
       if (response.updated_recovery_status && activeProjId) {
@@ -243,22 +274,28 @@ export function App() {
       }
 
       setMascotState('ready');
-      setMessages(prev => [
+      setProjectChats(prev => ({
         ...prev,
-        {
-          role: 'agent',
-          text: response.response
-        }
-      ]);
+        [activeProjId]: [
+          ...(prev[activeProjId] || updatedMessages),
+          {
+            role: 'agent',
+            text: response.response
+          }
+        ]
+      }));
     } catch (err: any) {
       setMascotState('error');
-      setMessages(prev => [
+      setProjectChats(prev => ({
         ...prev,
-        {
-          role: 'agent',
-          text: `⚠️ Error communicating with agent: ${err.message || 'Please check backend connection.'}`
-        }
-      ]);
+        [selectedProject.id]: [
+          ...(prev[selectedProject.id] || updatedMessages),
+          {
+            role: 'agent',
+            text: `[Error] Unable to communicate with agent: ${err.message || 'Please check backend connection.'}`
+          }
+        ]
+      }));
     }
   }
 
@@ -352,9 +389,9 @@ export function App() {
 
             <button
               type="submit"
-              className="w-full py-3.5 pop-btn-pink font-pop-title text-sm tracking-wider uppercase"
+              className="w-full py-3.5 pop-btn-pink font-pixel text-xs tracking-wider uppercase"
             >
-              {isRegister ? '★ CREATE FREE WORKSPACE' : '★ SIGN IN TO WORKSPACE'}
+              {isRegister ? 'CREATE FREE WORKSPACE' : 'SIGN IN TO WORKSPACE'}
             </button>
           </form>
 
@@ -374,20 +411,20 @@ export function App() {
   // Logged In -> Project Agent Studio / Vector Pop UI
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col text-[var(--pop-text)] bg-[var(--pop-bg)] font-sans">
-      {/* Top Studio Header */}
-      <header className="h-16 flex-shrink-0 bg-[var(--pop-card)] border-b border-[#1E293B] px-5 flex items-center justify-between sticky top-0 z-30">
+      {/* Top Pixel Studio Header */}
+      <header className="h-16 flex-shrink-0 bg-[var(--pop-card)] border-b-2 border-black px-5 flex items-center justify-between sticky top-0 z-30 shadow-[0_2px_0_#000]">
         <div className="flex items-center gap-3">
-          {/* Studio Icon / Logo */}
-          <div className="w-10 h-10 rounded-xl bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-sm cursor-pointer hover:border-emerald-400 transition">
+          {/* Studio Icon / Logo in Pixel Pop Box */}
+          <div className="w-10 h-10 rounded bg-[#00FF66] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 transition">
             <FlaskConical className="w-5 h-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="font-bold text-base text-[var(--pop-text)] tracking-tight">Project Agent Studio</span>
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-[11px] font-medium text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Agent Ready</span>
+              <span className="font-pixel text-sm text-[var(--pop-text)] tracking-wider">FIIXO</span>
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-950/80 border border-[#00FF66] text-[10px] font-mono text-[#00FF66]">
+                <span className="w-1.5 h-1.5 rounded-none bg-[#00FF66] animate-pulse" />
+                <span>AGENT READY</span>
               </div>
             </div>
             <p className="text-[11px] text-[var(--pop-text-muted)] font-mono">
@@ -397,13 +434,13 @@ export function App() {
         </div>
 
         {/* Top Right Controls: Mode Selector, Knowledge Base, Export, Clear, User */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Mode Dropdown */}
           <div className="relative">
             <select
               value={agentMode}
               onChange={(e) => setAgentMode(e.target.value as any)}
-              className="appearance-none bg-[#161F30] hover:bg-[#1F2A40] border border-[#2D3B55] text-xs font-semibold px-3 py-1.5 pr-8 rounded-lg text-[var(--pop-text)] focus:outline-none focus:border-emerald-500 transition cursor-pointer"
+              className="appearance-none bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-xs font-semibold px-3 py-1.5 pr-8 rounded text-[var(--pop-text)] shadow-[2px_2px_0px_#000] focus:outline-none cursor-pointer"
             >
               <option value="concise">Mode: Concise Engineer</option>
               <option value="architect">Mode: Full Architecture</option>
@@ -415,12 +452,12 @@ export function App() {
           {/* Knowledge Base Button with Pill Badge */}
           <button
             onClick={() => setShowKnowledgeBase(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border border-[#2D3B55] hover:border-emerald-500/50 rounded-lg text-xs font-semibold text-[var(--pop-text)] transition cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Open Repository Knowledge Base"
           >
-            <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+            <BookOpen className="w-3.5 h-3.5 text-[#00FF66]" />
             <span>Knowledge Base</span>
-            <span className="w-4 h-4 rounded-full bg-emerald-900/60 text-emerald-300 text-[10px] flex items-center justify-center font-bold">
+            <span className="w-4 h-4 rounded bg-[#00FF66] text-black text-[10px] flex items-center justify-center font-bold font-mono">
               3
             </span>
           </button>
@@ -428,7 +465,7 @@ export function App() {
           {/* Export Chat Button */}
           <button
             onClick={handleExportChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border border-[#2D3B55] rounded-lg text-xs font-semibold text-[var(--pop-text)] transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Export conversation history"
           >
             <Download className="w-3.5 h-3.5 text-gray-300" />
@@ -438,7 +475,7 @@ export function App() {
           {/* Clear Chat Button */}
           <button
             onClick={handleClearChat}
-            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border border-[#2D3B55] hover:border-rose-500/40 text-gray-400 hover:text-rose-400 rounded-lg text-xs transition cursor-pointer"
+            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-gray-400 hover:text-rose-400 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Reset conversation"
           >
             <Trash2 className="w-4 h-4" />
@@ -447,16 +484,16 @@ export function App() {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 bg-[#161F30] hover:bg-[#1F2A40] border border-[#2D3B55] text-gray-300 rounded-lg text-xs transition cursor-pointer"
+            className="p-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-gray-300 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           >
-            {theme === 'light' ? <Moon className="w-4 h-4 text-[#FF3366]" /> : <Sun className="w-4 h-4 text-amber-400" />}
+            {theme === 'light' ? <Moon className="w-4 h-4 text-[#FF0055]" /> : <Sun className="w-4 h-4 text-[#FFE600]" />}
           </button>
 
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border border-[#2D3B55] hover:border-rose-500/40 text-gray-400 hover:text-rose-400 rounded-lg text-xs transition cursor-pointer"
+            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-gray-400 hover:text-rose-400 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Log out"
           >
             <LogOut className="w-4 h-4" />
@@ -468,17 +505,17 @@ export function App() {
       <div className="flex-1 min-h-0 flex overflow-hidden">
         
         {/* Left Sidebar: Select Project & Active Agent Context */}
-        <aside className="w-72 flex-shrink-0 bg-[var(--pop-card)] border-r border-[#1E293B] flex flex-col justify-between overflow-hidden">
+        <aside className="w-72 flex-shrink-0 bg-[var(--pop-card)] border-r-2 border-black flex flex-col justify-between overflow-hidden shadow-[2px_0_0_#000]">
           <div className="flex-1 flex flex-col min-h-0 p-4">
             
             {/* Header: SELECT PROJECT + New Button */}
             <div className="flex items-center justify-between mb-3 pb-1">
-              <h2 className="text-[11px] font-bold tracking-wider text-[var(--pop-text-muted)] uppercase">
+              <h2 className="text-[10px] font-pixel tracking-wider text-[var(--pop-text-muted)] uppercase">
                 SELECT PROJECT
               </h2>
               <button
                 onClick={() => setShowNewProject(true)}
-                className="px-2.5 py-1 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-bold flex items-center gap-1 transition"
+                className="px-2.5 py-1 bg-[#00FF66] hover:bg-emerald-400 border-2 border-black text-black rounded text-xs font-bold flex items-center gap-1 shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition"
                 title="Create or Import Project"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -489,12 +526,12 @@ export function App() {
             {/* Project List */}
             <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0">
               {projects.length === 0 ? (
-                <div className="p-4 border border-dashed border-[#2D3B55] rounded-xl text-center bg-[#161F30]">
+                <div className="p-4 border-2 border-dashed border-[#2D3B55] rounded text-center bg-[#161F30]">
                   <FolderGit2 className="w-7 h-7 text-gray-500 mx-auto mb-2" />
                   <p className="text-xs text-[var(--pop-text-muted)] font-medium">No projects found.</p>
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="mt-2 text-xs font-bold text-emerald-400 hover:underline uppercase"
+                    className="mt-2 text-xs font-bold text-[#00FF66] hover:underline uppercase"
                   >
                     + Import Project
                   </button>
@@ -502,34 +539,27 @@ export function App() {
               ) : (
                 projects.map(proj => {
                   const isSelected = selectedProject?.id === proj.id;
-                  const docCount = proj.name === 'fiixo' ? 3 : (proj.name.toLowerCase().includes('dodo') ? 3 : 2);
-                  const descText = proj.description || (proj.name === 'fiixo' ? 'GitHub repository moonxplor/fiixo' : (proj.repository?.clone_url ? proj.repository.clone_url.replace('https://github.com/', '') : 'Active revival project'));
+                  const docCount = 3;
+                  const descText = proj.description || (proj.repository?.clone_url ? proj.repository.clone_url.replace('https://github.com/', '') : 'Active repository');
 
                   return (
                     <div 
                       key={proj.id}
                       onClick={() => {
                         setSelectedProject(proj);
-                        setMessages(prev => [
-                          ...prev,
-                          {
-                            role: 'agent',
-                            text: `Switched active repository to **${proj.name}** (\`${proj.default_branch}\`). Loaded knowledge base and AST manifests.`,
-                            details: `Repo: ${proj.repository?.clone_url || 'local'}`
-                          }
-                        ]);
                       }}
-                      className={`p-3 rounded-xl cursor-pointer transition relative border ${
+                      className={`p-3 rounded cursor-pointer transition relative border-2 ${
                         isSelected 
-                          ? 'bg-[#161F30] border-emerald-500/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]' 
-                          : 'bg-[#121926] hover:bg-[#161F30] border-[#1E293B]'
+                          ? 'bg-[#161F30] border-[#00FF66] shadow-[3px_3px_0px_#000]' 
+                          : 'bg-[#121926] hover:bg-[#161F30] border-black shadow-[2px_2px_0px_#000]'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className={`font-bold text-sm tracking-tight ${isSelected ? 'text-white' : 'text-gray-300'}`}>
+                        <span className={`font-bold text-sm tracking-tight flex items-center gap-1.5 ${isSelected ? 'text-white' : 'text-gray-300'}`}>
+                          <MessageSquare className={`w-3.5 h-3.5 ${isSelected ? 'text-[#00FF66]' : 'text-gray-500'}`} />
                           {proj.name}
                         </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1F2A40] text-gray-300 border border-[#2D3B55]">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1F2A40] text-gray-300 border border-black">
                           {docCount} docs
                         </span>
                       </div>
@@ -544,34 +574,34 @@ export function App() {
             </div>
           </div>
 
-          {/* Active Agent Context Footer (Matches screenshot bottom left) */}
+          {/* Active Agent Context Footer */}
           {selectedProject && (
-            <div className="p-4 border-t border-[#1E293B] bg-[#0E1522] space-y-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                Active Agent Context
+            <div className="p-4 border-t-2 border-black bg-[#0E1522] space-y-2">
+              <span className="text-[9px] font-pixel text-gray-400 uppercase tracking-wider block">
+                ACTIVE CONTEXT
               </span>
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-sm text-white block">{selectedProject.name}</span>
-                  <span className="text-[11px] text-emerald-400 font-mono block">
+                  <span className="text-[11px] text-[#00FF66] font-mono block">
                     {selectedProject.repository?.clone_url ? selectedProject.repository.clone_url.replace('https://github.com/', '') : 'moonxplor/' + selectedProject.name}
                   </span>
                 </div>
                 <button
                   onClick={handleSyncRepo}
                   disabled={isSyncing}
-                  className="px-2.5 py-1 bg-[#161F30] hover:bg-[#1F2A40] border border-[#2D3B55] text-gray-200 text-xs font-semibold rounded-lg flex items-center gap-1 transition"
-                  title="Resync repository documents & AST"
+                  className="px-2.5 py-1 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-gray-200 text-xs font-semibold rounded flex items-center gap-1 shadow-[2px_2px_0px_#000] transition"
+                  title="Resync repository documents"
                 >
-                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin text-emerald-400' : ''}`} />
+                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin text-[#00FF66]' : ''}`} />
                   <span>Sync</span>
                 </button>
               </div>
 
               {/* Language Chip */}
               <div className="pt-1">
-                <span className="inline-block px-2 py-0.5 bg-[#161F30] border border-[#2D3B55] text-emerald-300 text-[10px] font-mono rounded">
-                  Python
+                <span className="inline-block px-2 py-0.5 bg-[#161F30] border border-black text-[#00FF66] text-[10px] font-mono rounded">
+                  {selectedProject.primary_language || 'Python'}
                 </span>
               </div>
             </div>
@@ -583,13 +613,13 @@ export function App() {
           
           {/* Conversation Stream: Clean Markdown file structure preview & messages */}
           <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pr-2">
-            {messages.map((m, idx) => (
+            {currentMessages.map((m, idx) => (
               <div 
                 key={idx}
                 className={`max-w-4xl ${m.role === 'user' ? 'ml-auto flex justify-end' : ''}`}
               >
                 {m.role === 'user' ? (
-                  <div className="p-3.5 px-4 rounded-2xl bg-emerald-600 text-white font-medium text-sm max-w-xl">
+                  <div className="p-3.5 px-4 rounded bg-[#FF0055] text-white font-medium text-sm max-w-xl border-2 border-black shadow-[3px_3px_0px_#000]">
                     <p className="whitespace-pre-wrap">{m.text}</p>
                   </div>
                 ) : (
@@ -605,20 +635,20 @@ export function App() {
             ))}
             {mascotState === 'thinking' && (
               <div className="flex gap-3 max-w-xl items-center animate-pulse pt-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-950/70 border border-emerald-500/40 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                <div className="w-8 h-8 rounded bg-[#00FF66] border-2 border-black flex items-center justify-center text-black flex-shrink-0 shadow-[2px_2px_0px_#000]">
                   <FlaskConical className="w-4 h-4" />
                 </div>
-                <div className="p-3 rounded-xl border border-emerald-500/40 bg-[#121926] text-xs font-semibold text-emerald-400 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Agent is querying Gemini API & analyzing repository...</span>
+                <div className="p-2.5 px-3 rounded border-2 border-black bg-[#121926] text-xs font-semibold text-[#00FF66] flex items-center gap-2 shadow-[2px_2px_0px_#000]">
+                  <span className="w-2 h-2 rounded-none bg-[#00FF66] animate-ping" />
+                  <span>Analyzing repository and preparing response...</span>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Bottom Action Area: Quick Inquiry Chips & Ask Gemini Input */}
+          {/* Bottom Action Area: Quick Inquiry Chips & Ask Agent Input */}
           <div className="pt-3 flex-shrink-0 space-y-3">
-            {/* 4 Studio Quick Pill Chips (Directly from screenshot) */}
+            {/* 4 Studio Quick Pill Chips in Pixel Pop Style */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               {[
                 "Summarize this repository",
@@ -629,15 +659,15 @@ export function App() {
                 <button
                   key={idx}
                   onClick={() => handleSendPrompt(chip)}
-                  className="px-3.5 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] text-gray-300 hover:text-white border border-[#2D3B55] hover:border-emerald-500/50 rounded-full text-xs font-medium transition cursor-pointer active:scale-95 shadow-sm"
+                  className="px-3.5 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] text-gray-300 hover:text-white border-2 border-black hover:border-[#00FF66] rounded text-xs font-medium shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer active:scale-95"
                 >
                   {chip}
                 </button>
               ))}
             </div>
 
-            {/* Studio Input Bar + Ask Gemini Pill Button */}
-            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-[#121926] border border-[#232F48] focus-within:border-emerald-500/80 rounded-2xl p-1.5 px-3 transition shadow-lg">
+            {/* Studio Input Bar + Ask Agent Button */}
+            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-[#121926] border-2 border-black focus-within:border-[#00FF66] rounded p-1.5 px-3 transition shadow-[4px_4px_0px_#000]">
               <input
                 type="text"
                 value={prompt}
@@ -648,10 +678,10 @@ export function App() {
               />
               <button
                 onClick={() => handleSendPrompt()}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-md active:scale-95"
+                className="px-4 py-2 bg-[#00FF66] hover:bg-emerald-400 text-black text-xs font-bold font-pixel tracking-wider rounded border-2 border-black shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition flex items-center gap-1.5 cursor-pointer active:scale-95"
               >
-                <span>Ask Gemini</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>SEND</span>
+                <ArrowRight className="w-3.5 h-3.5 text-black" />
               </button>
             </div>
 
@@ -661,6 +691,7 @@ export function App() {
           </div>
         </main>
       </div>
+
 
       {/* Knowledge Base Modal */}
       {showKnowledgeBase && (
@@ -676,9 +707,9 @@ export function App() {
               </div>
               <button
                 onClick={() => setShowKnowledgeBase(false)}
-                className="text-gray-400 hover:text-white p-1"
+                className="text-gray-400 hover:text-white p-1 text-sm font-bold font-mono"
               >
-                ✕
+                X
               </button>
             </div>
 

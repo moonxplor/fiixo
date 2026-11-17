@@ -21,9 +21,11 @@ export default {
         }
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Space Grotesk", "system-ui", "sans-serif"],
         display: ["Space Grotesk", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"]
+        mono: ["JetBrains Mono", "monospace"],
+        pixel: ["'Press Start 2P'", "monospace"],
+        vt323: ["'VT323'", "monospace"]
       }
     },
   },

@@ -4,163 +4,161 @@
 
 :root {
   font-family: 'Space Grotesk', sans-serif;
-  --pop-ink: #111827;
-  --pop-pink: #FF3366;
-  --pop-cyan: #00D2FF;
-  --pop-purple: #7C4DFF;
-  --pop-green: #00E676;
-  --pop-orange: #FF6B35;
+  --pop-ink: #000000;
+  --pop-pink: #FF0055;
+  --pop-cyan: #00F0FF;
+  --pop-yellow: #FFE600;
+  --pop-purple: #7928CA;
+  --pop-green: #00FF66;
+  --pop-orange: #FF5500;
 }
 
-/* Light / Default Mode: Vibrant Sky Blue Retro Pop Art (Lichtenstein Comic Palette) */
+/* Light / Default Mode: Retro Arcade Pixel Pop */
 :root, .light {
-  --pop-bg: #70D6FF; /* Electric Vibrant Sky Blue */
-  --pop-dot: #38B6FF; /* Deeper cyan-sky halftone Ben-Day dots */
-  --pop-card: #FFFFFF; /* High-contrast comic white card */
-  --pop-card-inner: #F0F9FF; /* Soft sky tint inner panels */
-  --pop-card-alt: #E0F2FE; /* Crisp sky accent */
-  --pop-text: #111827; /* Solid comic ink black */
-  --pop-text-muted: #374151; /* Dark comic pencil grey */
+  --pop-bg: #E8EDF5;
+  --pop-dot: #CBD5E1;
+  --pop-card: #FFFFFF;
+  --pop-card-inner: #F1F5F9;
+  --pop-card-alt: #E2E8F0;
+  --pop-text: #0F172A;
+  --pop-text-muted: #475569;
   --pop-input-bg: #FFFFFF;
   --pop-code-bg: #0F172A;
-  --pop-code-text: #F8FAFC;
+  --pop-code-text: #00FF66;
   --pop-chip-bg: #FFFFFF;
-  --pop-chip-hover: #E0F2FE;
+  --pop-chip-hover: #E2E8F0;
 }
 
-/* Dark Mode: Pure Professional Studio Dark (Sleek Engineer Dark Theme) */
+/* Dark Mode: Cyberpunk Arcade Dark Pixel Pop (Solid Deep Obsidian + Electric Neon Accents) */
 .dark {
-  --pop-bg: #0B0F17; /* Deep Charcoal Black Studio Background */
-  --pop-dot: #1A2234; /* Subtle dark matrix grid */
-  --pop-card: #111827; /* Rich dark container */
-  --pop-card-inner: #161F30; /* Elevated card surface */
-  --pop-card-alt: #1F2A40; /* Hover & selection state */
-  --pop-text: #F3F4F6; /* Crisp clean chalk white */
-  --pop-text-muted: #9CA3AF; /* Cool slate muted text */
-  --pop-input-bg: #161F30; /* Studio input dark */
-  --pop-code-bg: #080D1A; /* Terminal pitch black */
-  --pop-code-text: #34D399; /* Mint emerald terminal accent */
-  --pop-chip-bg: #161F30;
-  --pop-chip-hover: #1F2A40;
+  --pop-bg: #080A10;
+  --pop-dot: #151926;
+  --pop-card: #0F131D;
+  --pop-card-inner: #161D2B;
+  --pop-card-alt: #1F283B;
+  --pop-text: #F8FAFC;
+  --pop-text-muted: #94A3B8;
+  --pop-input-bg: #121724;
+  --pop-code-bg: #05070A;
+  --pop-code-text: #00FF66;
+  --pop-chip-bg: #161D2B;
+  --pop-chip-hover: #1F283B;
 }
 
 body {
   background-color: var(--pop-bg);
   color: var(--pop-text);
-  /* Retro Vector Pop Halftone / Ben-Day Ink Dot Matrix */
-  background-image: radial-gradient(var(--pop-dot) 2.5px, transparent 2.5px);
-  background-size: 20px 20px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  /* Pixel Grid Dot Pattern (Crisp 16px Arcade Grid) */
+  background-image: 
+    linear-gradient(to right, var(--pop-dot) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pop-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  image-rendering: pixelated;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 h1, h2, h3, h4, .font-display {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: -0.05em;
+}
+
+.font-vt323 {
+  font-family: 'VT323', monospace;
+}
+
 .font-pop-title {
-  font-family: 'Bungee', cursive;
+  font-family: 'Press Start 2P', monospace;
 }
 
 code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Retro Vector Pop Art 3.5px Solid Ink Card & Sharp Neo-Brutalist Drop Shadows */
+/* Pixel Pop Sharp Neo-Brutalist Arcade Cards */
 .pop-card {
   background-color: var(--pop-card);
-  border: 3.5px solid var(--pop-ink);
-  box-shadow: 6px 6px 0px var(--pop-ink);
-  border-radius: 20px;
-  transition: all 0.15s ease;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 4px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 .pop-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 8px 8px 0px var(--pop-ink);
+  box-shadow: 6px 6px 0px #000000;
 }
 
-/* Retro Vector Pop Interactive Action Buttons */
+/* Pixel Pop Interactive Buttons with 8-bit Stepped Shadows */
 .pop-btn-pink {
   background-color: var(--pop-pink);
   color: #FFFFFF;
-  border: 3px solid var(--pop-ink);
-  box-shadow: 4px 4px 0px var(--pop-ink);
-  border-radius: 14px;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 4px;
   font-weight: 800;
-  transition: all 0.1s ease;
+  transition: all 0.08s ease;
 }
 .pop-btn-pink:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--pop-ink);
+  box-shadow: 6px 6px 0px #000000;
 }
 .pop-btn-pink:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--pop-ink);
+  box-shadow: 1px 1px 0px #000000;
 }
 
 .pop-btn-cyan {
   background-color: var(--pop-cyan);
-  color: var(--pop-ink);
-  border: 3px solid var(--pop-ink);
-  box-shadow: 4px 4px 0px var(--pop-ink);
-  border-radius: 14px;
+  color: #000000;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 4px;
   font-weight: 800;
-  transition: all 0.1s ease;
+  transition: all 0.08s ease;
 }
 .pop-btn-cyan:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--pop-ink);
+  box-shadow: 6px 6px 0px #000000;
 }
 .pop-btn-cyan:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--pop-ink);
+  box-shadow: 1px 1px 0px #000000;
 }
 
 .pop-btn-purple {
   background-color: var(--pop-purple);
   color: #FFFFFF;
-  border: 3px solid var(--pop-ink);
-  box-shadow: 4px 4px 0px var(--pop-ink);
-  border-radius: 14px;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 4px;
   font-weight: 800;
-  transition: all 0.1s ease;
+  transition: all 0.08s ease;
 }
 .pop-btn-purple:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--pop-ink);
+  box-shadow: 6px 6px 0px #000000;
 }
 .pop-btn-purple:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--pop-ink);
+  box-shadow: 1px 1px 0px #000000;
 }
 
-/* Comic Speech Balloons */
-.comic-balloon-agent {
-  background-color: var(--pop-card-inner);
-  border: 3.5px solid var(--pop-ink);
-  box-shadow: 5px 5px 0px var(--pop-ink);
-  border-radius: 18px;
-}
-
-.comic-balloon-user {
-  background-color: var(--pop-pink);
-  color: #FFFFFF;
-  border: 3.5px solid var(--pop-ink);
-  box-shadow: 5px 5px 0px var(--pop-ink);
-  border-radius: 18px;
-}
-
-/* Custom Vector Pop Ink Scrollbar */
+/* Custom Pixel Pop Stepped Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--pop-card-inner);
+  border-left: 2px solid #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--pop-ink);
-  border: 2px solid var(--pop-card-alt);
-  border-radius: 9999px;
+  background: #00FF66;
+  border: 2px solid #000000;
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--pop-pink);
@@ -196,20 +194,20 @@ code, pre, .font-mono {
 .markdown-body pre {
   background-color: var(--pop-code-bg);
   color: var(--pop-code-text);
-  border: 2.5px solid var(--pop-ink);
-  border-radius: 12px;
+  border: 2px solid #000000;
+  border-radius: 4px;
   padding: 0.75rem 1rem;
   overflow-x: auto;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
   margin: 0.75rem 0;
-  box-shadow: 3px 3px 0px var(--pop-ink);
+  box-shadow: 3px 3px 0px #000000;
 }
 .markdown-body code:not(pre code) {
   background-color: var(--pop-card-alt);
   color: var(--pop-pink);
-  border: 1px solid var(--pop-ink);
-  border-radius: 6px;
+  border: 1px solid #000000;
+  border-radius: 2px;
   padding: 0.15rem 0.35rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.82rem;
@@ -217,7 +215,7 @@ code, pre, .font-mono {
 }
 .markdown-body hr {
   border: none;
-  border-top: 2px dashed var(--pop-ink);
+  border-top: 2px dashed #000000;
   margin: 1rem 0;
   opacity: 0.4;
 }
