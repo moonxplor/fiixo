@@ -28,20 +28,20 @@
   --pop-chip-hover: #E0F2FE;
 }
 
-/* Dark Mode: Pure Professional Ink Black Pop Art (Zero Blue/Purple Tones) */
+/* Dark Mode: Pure Professional Studio Dark (Sleek Engineer Dark Theme) */
 .dark {
-  --pop-bg: #0A0A0A; /* Pure Jet Black */
-  --pop-dot: #222222; /* Subtle dark charcoal halftone Ben-Day dots */
-  --pop-card: #141414; /* Deep premium charcoal card */
-  --pop-card-inner: #1C1C1C; /* Inner card elevated slate-black */
-  --pop-card-alt: #262626; /* Contrast hover element */
-  --pop-text: #F4F4F5; /* Crisp high-contrast chalk white */
-  --pop-text-muted: #A1A1AA; /* Muted cool zinc grey */
-  --pop-input-bg: #141414; /* Input container pure dark */
-  --pop-code-bg: #050505; /* Pitch black code block */
-  --pop-code-text: #00E676; /* Vibrant mint green terminal code */
-  --pop-chip-bg: #1C1C1C;
-  --pop-chip-hover: #2A2A2A;
+  --pop-bg: #0B0F17; /* Deep Charcoal Black Studio Background */
+  --pop-dot: #1A2234; /* Subtle dark matrix grid */
+  --pop-card: #111827; /* Rich dark container */
+  --pop-card-inner: #161F30; /* Elevated card surface */
+  --pop-card-alt: #1F2A40; /* Hover & selection state */
+  --pop-text: #F3F4F6; /* Crisp clean chalk white */
+  --pop-text-muted: #9CA3AF; /* Cool slate muted text */
+  --pop-input-bg: #161F30; /* Studio input dark */
+  --pop-code-bg: #080D1A; /* Terminal pitch black */
+  --pop-code-text: #34D399; /* Mint emerald terminal accent */
+  --pop-chip-bg: #161F30;
+  --pop-chip-hover: #1F2A40;
 }
 
 body {
