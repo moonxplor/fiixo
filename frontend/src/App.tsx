@@ -432,12 +432,12 @@ export function App() {
           >
             {theme === 'light' ? (
               <>
-                <Moon className="w-4 h-4 text-[#7C4DFF]" />
+                <Moon className="w-4 h-4 text-[#FF3366]" />
                 <span className="hidden sm:inline font-mono">DARK</span>
               </>
             ) : (
               <>
-                <Sun className="w-4 h-4 text-[#00D2FF]" />
+                <Sun className="w-4 h-4 text-[#FF6B35]" />
                 <span className="hidden sm:inline font-mono">LIGHT</span>
               </>
             )}

@@ -28,20 +28,20 @@
   --pop-chip-hover: #E0F2FE;
 }
 
-/* Dark Mode: Deep Midnight Pop (Deep Sky & Slate Contrast) */
+/* Dark Mode: Pure Professional Ink Black Pop Art (Zero Blue/Purple Tones) */
 .dark {
-  --pop-bg: #0F172A; /* Deep Midnight Navy-Sky */
-  --pop-dot: #1E293B; /* Subtle dark dot matrix */
-  --pop-card: #1E293B; /* Deep Slate-Navy card */
-  --pop-card-inner: #334155; /* Inner panel */
-  --pop-card-alt: #475569;
-  --pop-text: #F8FAFC;
-  --pop-text-muted: #94A3B8;
-  --pop-input-bg: #0F172A;
-  --pop-code-bg: #020617;
-  --pop-code-text: #38BDF8;
-  --pop-chip-bg: #334155;
-  --pop-chip-hover: #475569;
+  --pop-bg: #0A0A0A; /* Pure Jet Black */
+  --pop-dot: #222222; /* Subtle dark charcoal halftone Ben-Day dots */
+  --pop-card: #141414; /* Deep premium charcoal card */
+  --pop-card-inner: #1C1C1C; /* Inner card elevated slate-black */
+  --pop-card-alt: #262626; /* Contrast hover element */
+  --pop-text: #F4F4F5; /* Crisp high-contrast chalk white */
+  --pop-text-muted: #A1A1AA; /* Muted cool zinc grey */
+  --pop-input-bg: #141414; /* Input container pure dark */
+  --pop-code-bg: #050505; /* Pitch black code block */
+  --pop-code-text: #00E676; /* Vibrant mint green terminal code */
+  --pop-chip-bg: #1C1C1C;
+  --pop-chip-hover: #2A2A2A;
 }
 
 body {
