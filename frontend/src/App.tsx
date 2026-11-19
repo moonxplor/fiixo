@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
@@ -109,6 +109,16 @@ Ask anything about **Fiixo**, its architecture, tech stack, or click one of the 
       text: `### Active Project: **${selectedProject?.name || 'Selected Repository'}**\n\n**Repository:** \`${selectedProject?.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject?.default_branch || 'main'}\`\n**Language:** \`${selectedProject?.primary_language || 'Auto-detect'}\`\n\nThis is a dedicated chat session for **${selectedProject?.name || 'this repository'}**. Ask anything about this codebase, architecture, setup steps, or click one of the quick inquiry options below.`
     }
   ]);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  };
+
+  useEffect(() => {
+    scrollToBottom('smooth');
+  }, [currentMessages, mascotState, selectedProject?.id]);
 
 
   // Project Creation Modal State
@@ -644,6 +654,7 @@ Ask anything about **Fiixo**, its architecture, tech stack, or click one of the 
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Bottom Action Area: Quick Inquiry Chips & Ask Agent Input */}

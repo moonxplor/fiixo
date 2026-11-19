@@ -1,7 +1,6 @@
 # FIIXO 
 ###  Repository Revival and Developer Companion SaaS
 > *"Understand. Explain. Repair. Teach."*
-
 ---
 ##  Key Features Implemented in Phase 1
 - **Multi-Tenant Workspace Isolation:** Strict separation of projects, repos, and settings per workspace with zero cross-tenant data leakage.
