@@ -70,17 +70,15 @@ export function App() {
   const defaultFiixoWelcome: Array<{ role: 'user' | 'agent'; text: string; details?: string }> = [
     {
       role: 'agent',
-      text: `Welcome to **Fiixo** — your developer companion and legacy repository revival agent.
-
-### Active Repository: \`moonxplor/fiixo\`
-* \`README.md\` — Fiixo architecture & agent orchestration specification
-* \`backend/app/main.py\` — Backend service entry point & router
-* \`backend/app/services/agent_service.py\` — Multi-model code intelligence reasoning agent
-* \`backend/app/api/v1/agent.py\` — Repository inquiry & conversational intelligence engine
-* \`backend/app/api/v1/auth.py\` — User authentication & session controller
+      text: `### Active Repository: \`moonxplor/fiixo\`
+* \`README.md\` — Architecture & system specification
+* \`backend/app/main.py\` — FastAPI backend entry point
+* \`backend/app/services/agent_service.py\` — Code intelligence reasoning agent
+* \`backend/app/api/v1/agent.py\` — Repository inquiry & conversation engine
+* \`backend/app/api/v1/auth.py\` — Authentication & session controller
 * \`frontend/src/App.tsx\` — Studio dashboard & repository interface
 
-Ask anything about **Fiixo**, its architecture, tech stack, or click one of the inquiry options below.`
+Ask a technical question, or select a quick inquiry below.`
     }
   ];
 
@@ -106,7 +104,7 @@ Ask anything about **Fiixo**, its architecture, tech stack, or click one of the 
   const currentMessages = (selectedProject && projectChats[selectedProject.id]) || (selectedProject?.name === 'fiixo' ? defaultFiixoWelcome : [
     {
       role: 'agent' as const,
-      text: `### Active Project: **${selectedProject?.name || 'Selected Repository'}**\n\n**Repository:** \`${selectedProject?.repository?.clone_url || 'local'}\`\n**Branch:** \`${selectedProject?.default_branch || 'main'}\`\n**Language:** \`${selectedProject?.primary_language || 'Auto-detect'}\`\n\nThis is a dedicated chat session for **${selectedProject?.name || 'this repository'}**. Ask anything about this codebase, architecture, setup steps, or click one of the quick inquiry options below.`
+      text: `### Active Project: **${selectedProject?.name || 'Selected Repository'}**\n* Repository: \`${selectedProject?.repository?.clone_url || 'local'}\`\n* Branch: \`${selectedProject?.default_branch || 'main'}\`\n* Language: \`${selectedProject?.primary_language || 'Auto-detect'}\`\n\nAsk a technical question, or select a quick inquiry below.`
     }
   ]);
 
