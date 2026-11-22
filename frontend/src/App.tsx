@@ -20,6 +20,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { Mascot, MascotState } from './components/Mascot';
+import { FiixoLogo } from './components/FiixoLogo';
 import { api, User, Workspace, Project } from './services/api';
 
 export function App() {
@@ -353,7 +354,9 @@ Ask a technical question, or select a quick inquiry below.`
 
         <div className="w-full max-w-md pop-card p-8">
           <div className="flex flex-col items-center text-center mb-6">
-            <Mascot state="ready" size="lg" className="mb-3" />
+            <div className="p-3 bg-[#2D2254] border-3 border-black rounded shadow-[4px_4px_0px_#000] mb-3">
+              <FiixoLogo size={90} />
+            </div>
             <h1 className="font-pop-title text-3xl tracking-wider text-[var(--pop-text)] drop-shadow-[2px_2px_0px_#111827]">FIIXO!</h1>
             <p className="text-sm font-semibold text-[var(--pop-text-muted)] mt-1">Your AI Developer Companion</p>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--pop-card-inner)] border-2 border-[#111827] rounded-full text-xs font-bold text-[#FF3366] mt-3 shadow-[2px_2px_0px_#111827]">
@@ -432,9 +435,9 @@ Ask a technical question, or select a quick inquiry below.`
       {/* Top Pixel Studio Header */}
       <header className="h-16 flex-shrink-0 bg-[var(--pop-card)] border-b-2 border-black px-5 flex items-center justify-between sticky top-0 z-30 shadow-[0_2px_0_#000]">
         <div className="flex items-center gap-3">
-          {/* Studio Icon / Logo in Pixel Pop Box */}
-          <div className="w-10 h-10 rounded bg-[#00FF66] border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 transition">
-            <FlaskConical className="w-5 h-5" />
+          {/* High-Res Pixel Pop FX Logo */}
+          <div className="h-10 px-1.5 rounded bg-[#2D2254] border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 transition">
+            <FiixoLogo size={48} className="drop-shadow-sm" />
           </div>
 
           <div>

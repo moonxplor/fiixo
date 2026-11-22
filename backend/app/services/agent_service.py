@@ -82,13 +82,11 @@ class GeminiAgentService:
             )
 
             models_to_try = [
-                "gemini-2.0-flash",
-                "gemini-flash-latest",
-                "gemini-2.5-flash-lite",
                 "gemini-3.5-flash-lite",
-                settings.GEMINI_MODEL,
                 "gemini-3.5-flash",
-                "gemini-3.8-flash"
+                "gemini-3.8-flash",
+                settings.GEMINI_MODEL,
+                "gemini-2.5-flash"
             ]
             text_output = None
             last_err = None
