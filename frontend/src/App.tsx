@@ -142,7 +142,17 @@ Ask a technical question, or select a quick inquiry below.`
         setLoading(false);
       }
     }
+
+    const onAuthExpired = () => {
+      setCurrentUser(null);
+    };
+    window.addEventListener('fiixo:auth:expired', onAuthExpired);
+
     checkAuth();
+
+    return () => {
+      window.removeEventListener('fiixo:auth:expired', onAuthExpired);
+    };
   }, []);
 
   async function loadProjects(workspaceId: string) {
@@ -448,22 +458,22 @@ Ask a technical question, or select a quick inquiry below.`
             <select
               value={agentMode}
               onChange={(e) => setAgentMode(e.target.value as any)}
-              className="appearance-none bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-xs font-semibold px-3 py-1.5 pr-8 rounded text-[var(--pop-text)] shadow-[2px_2px_0px_#000] focus:outline-none cursor-pointer"
+              className="appearance-none bg-[var(--pop-btn-bg)] hover:bg-[var(--pop-btn-hover)] border-2 border-black text-xs font-semibold px-3 py-1.5 pr-8 rounded text-[var(--pop-text)] shadow-[2px_2px_0px_#000] focus:outline-none cursor-pointer"
             >
               <option value="concise">Mode: Concise Engineer</option>
               <option value="architect">Mode: Full Architecture</option>
               <option value="pedantic">Mode: Step-by-Step Teacher</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-2.5 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-[var(--pop-text-muted)] absolute right-2.5 top-2.5 pointer-events-none" />
           </div>
 
           {/* Knowledge Base Button with Pill Badge */}
           <button
             onClick={() => setShowKnowledgeBase(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[var(--pop-btn-bg)] hover:bg-[var(--pop-btn-hover)] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Open Repository Knowledge Base"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#00FF66]" />
+            <BookOpen className="w-3.5 h-3.5 text-emerald-500" />
             <span>Knowledge Base</span>
             <span className="w-4 h-4 rounded bg-[#00FF66] text-black text-[10px] flex items-center justify-center font-bold font-mono">
               3
@@ -473,17 +483,17 @@ Ask a technical question, or select a quick inquiry below.`
           {/* Export Chat Button */}
           <button
             onClick={handleExportChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--pop-btn-bg)] hover:bg-[var(--pop-btn-hover)] border-2 border-black rounded text-xs font-semibold text-[var(--pop-text)] shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Export conversation history"
           >
-            <Download className="w-3.5 h-3.5 text-gray-300" />
+            <Download className="w-3.5 h-3.5 text-[var(--pop-text-muted)]" />
             <span className="hidden sm:inline">Export</span>
           </button>
 
           {/* Clear Chat Button */}
           <button
             onClick={handleClearChat}
-            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-gray-400 hover:text-rose-400 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
+            className="p-1.5 bg-[var(--pop-btn-bg)] hover:bg-rose-100 dark:hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-[var(--pop-text-muted)] hover:text-rose-500 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Reset conversation"
           >
             <Trash2 className="w-4 h-4" />
@@ -492,7 +502,7 @@ Ask a technical question, or select a quick inquiry below.`
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-gray-300 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
+            className="p-1.5 bg-[var(--pop-btn-bg)] hover:bg-[var(--pop-btn-hover)] border-2 border-black text-[var(--pop-text)] rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           >
             {theme === 'light' ? <Moon className="w-4 h-4 text-[#FF0055]" /> : <Sun className="w-4 h-4 text-[#FFE600]" />}
@@ -501,7 +511,7 @@ Ask a technical question, or select a quick inquiry below.`
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="p-1.5 bg-[#161F30] hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-gray-400 hover:text-rose-400 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
+            className="p-1.5 bg-[var(--pop-btn-bg)] hover:bg-rose-100 dark:hover:bg-rose-950/60 border-2 border-black hover:border-rose-500 text-[var(--pop-text-muted)] hover:text-rose-500 rounded text-xs shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
             title="Log out"
           >
             <LogOut className="w-4 h-4" />
@@ -534,12 +544,12 @@ Ask a technical question, or select a quick inquiry below.`
             {/* Project List */}
             <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0">
               {projects.length === 0 ? (
-                <div className="p-4 border-2 border-dashed border-[#2D3B55] rounded text-center bg-[#161F30]">
-                  <FolderGit2 className="w-7 h-7 text-gray-500 mx-auto mb-2" />
+                <div className="p-4 border-2 border-dashed border-black rounded text-center bg-[var(--pop-card-inner)]">
+                  <FolderGit2 className="w-7 h-7 text-[var(--pop-text-muted)] mx-auto mb-2" />
                   <p className="text-xs text-[var(--pop-text-muted)] font-medium">No projects found.</p>
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="mt-2 text-xs font-bold text-[#00FF66] hover:underline uppercase"
+                    className="mt-2 text-xs font-bold text-emerald-600 dark:text-[#00FF66] hover:underline uppercase"
                   >
                     + Import Project
                   </button>
@@ -558,21 +568,28 @@ Ask a technical question, or select a quick inquiry below.`
                       }}
                       className={`p-3 rounded cursor-pointer transition relative border-2 ${
                         isSelected 
-                          ? 'bg-[#161F30] border-[#00FF66] shadow-[3px_3px_0px_#000]' 
-                          : 'bg-[#121926] hover:bg-[#161F30] border-black shadow-[2px_2px_0px_#000]'
+                          ? 'pop-collage-selected' 
+                          : 'bg-[var(--pop-card-inner)] hover:bg-[var(--pop-card-alt)] border-black shadow-[2px_2px_0px_#000]'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className={`font-bold text-sm tracking-tight flex items-center gap-1.5 ${isSelected ? 'text-white' : 'text-gray-300'}`}>
-                          <MessageSquare className={`w-3.5 h-3.5 ${isSelected ? 'text-[#00FF66]' : 'text-gray-500'}`} />
+                      {/* Pop Collage decorative corner tape when selected */}
+                      {isSelected && (
+                        <div className="absolute -top-1.5 -right-2 px-2 py-0.5 bg-[#FFE600] text-black text-[9px] font-pixel border border-black shadow-[1px_1px_0px_#000] rotate-6 z-10">
+                          ACTIVE
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between relative z-1">
+                        <span className={`font-bold text-sm tracking-tight flex items-center gap-1.5 ${isSelected ? 'text-[var(--pop-text)]' : 'text-[var(--pop-text)]'}`}>
+                          <MessageSquare className={`w-3.5 h-3.5 ${isSelected ? 'text-emerald-500' : 'text-[var(--pop-text-muted)]'}`} />
                           {proj.name}
                         </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1F2A40] text-gray-300 border border-black">
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border border-black ${isSelected ? 'bg-[#FFE600] text-black font-bold' : 'bg-[var(--pop-card)] text-[var(--pop-text-muted)]'}`}>
                           {docCount} docs
                         </span>
                       </div>
                       
-                      <p className="text-[11px] text-gray-400 truncate mt-1 leading-normal font-sans">
+                      <p className={`text-[11px] truncate mt-1 leading-normal font-sans relative z-1 ${isSelected ? 'text-[var(--pop-text)] font-medium' : 'text-[var(--pop-text-muted)]'}`}>
                         {descText}
                       </p>
                     </div>
@@ -582,34 +599,42 @@ Ask a technical question, or select a quick inquiry below.`
             </div>
           </div>
 
-          {/* Active Agent Context Footer */}
+          {/* Active Agent Context Footer with Pop Collage Effect */}
           {selectedProject && (
-            <div className="p-4 border-t-2 border-black bg-[#0E1522] space-y-2">
-              <span className="text-[9px] font-pixel text-gray-400 uppercase tracking-wider block">
-                ACTIVE CONTEXT
-              </span>
+            <div className="p-4 pop-collage-context space-y-2">
               <div className="flex items-center justify-between">
+                <span className="pop-sticker-tape px-2 py-0.5 text-[9px] font-pixel uppercase tracking-wider">
+                  ACTIVE CONTEXT
+                </span>
+                <span className="text-[9px] font-mono font-bold bg-[#FF0055] text-white px-1.5 py-0.5 border border-black shadow-[1px_1px_0px_#000] rotate-1">
+                  SYNCED
+                </span>
+              </div>
+              <div className="flex items-center justify-between relative z-1">
                 <div>
-                  <span className="font-bold text-sm text-white block">{selectedProject.name}</span>
-                  <span className="text-[11px] text-[#00FF66] font-mono block">
+                  <span className="font-bold text-sm text-[var(--pop-text)] block">{selectedProject.name}</span>
+                  <span className="text-[11px] text-emerald-600 dark:text-[#00FF66] font-mono block font-semibold">
                     {selectedProject.repository?.clone_url ? selectedProject.repository.clone_url.replace('https://github.com/', '') : 'moonxplor/' + selectedProject.name}
                   </span>
                 </div>
                 <button
                   onClick={handleSyncRepo}
                   disabled={isSyncing}
-                  className="px-2.5 py-1 bg-[#161F30] hover:bg-[#1F2A40] border-2 border-black text-gray-200 text-xs font-semibold rounded flex items-center gap-1 shadow-[2px_2px_0px_#000] transition"
+                  className="px-2.5 py-1 bg-[var(--pop-btn-bg)] hover:bg-[var(--pop-btn-hover)] border-2 border-black text-[var(--pop-text)] text-xs font-semibold rounded flex items-center gap-1 shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition"
                   title="Resync repository documents"
                 >
-                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin text-[#00FF66]' : ''}`} />
+                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin text-emerald-500' : ''}`} />
                   <span>Sync</span>
                 </button>
               </div>
 
-              {/* Language Chip */}
-              <div className="pt-1">
-                <span className="inline-block px-2 py-0.5 bg-[#161F30] border border-black text-[#00FF66] text-[10px] font-mono rounded">
+              {/* Language Chip & Branch Stamp */}
+              <div className="pt-1 flex items-center gap-2 relative z-1">
+                <span className="inline-block px-2 py-0.5 bg-[var(--pop-card)] border border-black text-emerald-600 dark:text-[#00FF66] text-[10px] font-mono font-bold rounded shadow-[1px_1px_0px_#000]">
                   {selectedProject.primary_language || 'Python'}
+                </span>
+                <span className="inline-block px-2 py-0.5 bg-[#00F0FF] text-black border border-black text-[10px] font-mono font-bold rounded shadow-[1px_1px_0px_#000] -rotate-1">
+                  branch: {selectedProject.default_branch || 'main'}
                 </span>
               </div>
             </div>
@@ -631,7 +656,7 @@ Ask a technical question, or select a quick inquiry below.`
                     <p className="whitespace-pre-wrap">{m.text}</p>
                   </div>
                 ) : (
-                  <div className="text-gray-200 text-sm leading-relaxed">
+                  <div className="text-[var(--pop-text)] text-sm leading-relaxed">
                     <div className="markdown-body">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {m.text}
@@ -646,7 +671,7 @@ Ask a technical question, or select a quick inquiry below.`
                 <div className="w-8 h-8 rounded bg-[#00FF66] border-2 border-black flex items-center justify-center text-black flex-shrink-0 shadow-[2px_2px_0px_#000]">
                   <FlaskConical className="w-4 h-4" />
                 </div>
-                <div className="p-2.5 px-3 rounded border-2 border-black bg-[#121926] text-xs font-semibold text-[#00FF66] flex items-center gap-2 shadow-[2px_2px_0px_#000]">
+                <div className="p-2.5 px-3 rounded border-2 border-black bg-[var(--pop-card)] text-xs font-semibold text-emerald-600 dark:text-[#00FF66] flex items-center gap-2 shadow-[2px_2px_0px_#000]">
                   <span className="w-2 h-2 rounded-none bg-[#00FF66] animate-ping" />
                   <span>Analyzing repository and preparing response...</span>
                 </div>
@@ -668,7 +693,7 @@ Ask a technical question, or select a quick inquiry below.`
                 <button
                   key={idx}
                   onClick={() => handleSendPrompt(chip)}
-                  className="px-3.5 py-1.5 bg-[#161F30] hover:bg-[#1F2A40] text-gray-300 hover:text-white border-2 border-black hover:border-[#00FF66] rounded text-xs font-medium shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer active:scale-95"
+                  className="px-3.5 py-1.5 bg-[var(--pop-chip-bg)] hover:bg-[var(--pop-chip-hover)] text-[var(--pop-chip-text)] border-2 border-black hover:border-emerald-500 rounded text-xs font-medium shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer active:scale-95"
                 >
                   {chip}
                 </button>
@@ -676,14 +701,14 @@ Ask a technical question, or select a quick inquiry below.`
             </div>
 
             {/* Studio Input Bar + Ask Agent Button */}
-            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-[#121926] border-2 border-black focus-within:border-[#00FF66] rounded p-1.5 px-3 transition shadow-[4px_4px_0px_#000]">
+            <div className="max-w-4xl mx-auto flex items-center gap-3 bg-[var(--pop-input-bg)] border-2 border-black focus-within:border-emerald-500 rounded p-1.5 px-3 transition shadow-[4px_4px_0px_#000]">
               <input
                 type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendPrompt()}
                 placeholder="Ask anything about the selected project..."
-                className="flex-1 px-2 py-2 text-sm focus:outline-none bg-transparent text-gray-100 placeholder-gray-500 font-sans"
+                className="flex-1 px-2 py-2 text-sm focus:outline-none bg-transparent text-[var(--pop-input-text)] placeholder-[var(--pop-input-placeholder)] font-sans"
               />
               <button
                 onClick={() => handleSendPrompt()}
@@ -694,7 +719,7 @@ Ask a technical question, or select a quick inquiry below.`
               </button>
             </div>
 
-            <p className="text-center text-[11px] text-gray-500 font-sans">
+            <p className="text-center text-[11px] text-[var(--pop-text-muted)] font-sans">
               Answers are retrieved strictly from the selected project's knowledge base. Add or edit docs anytime.
             </p>
           </div>
@@ -704,25 +729,25 @@ Ask a technical question, or select a quick inquiry below.`
 
       {/* Knowledge Base Modal */}
       {showKnowledgeBase && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-xl bg-[#121926] border border-[#232F48] rounded-2xl p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#232F48] mb-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-xl bg-[var(--pop-card)] border-3 border-black rounded p-6 shadow-[6px_6px_0px_#000]">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-black mb-4">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-emerald-400" />
-                <h3 className="font-bold text-base text-white">Repository Knowledge Base</h3>
-                <span className="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono">
+                <BookOpen className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-bold text-base text-[var(--pop-text)] font-sans">Repository Knowledge Base</h3>
+                <span className="text-xs bg-[var(--pop-card-alt)] text-[var(--pop-text)] border border-black px-2 py-0.5 rounded font-mono">
                   3 docs indexed
                 </span>
               </div>
               <button
                 onClick={() => setShowKnowledgeBase(false)}
-                className="text-gray-400 hover:text-white p-1 text-sm font-bold font-mono"
+                className="text-[var(--pop-text-muted)] hover:text-[var(--pop-text)] p-1 text-sm font-bold font-mono border border-black rounded px-2 hover:bg-[var(--pop-card-alt)] transition cursor-pointer"
               >
                 X
               </button>
             </div>
 
-            <p className="text-xs text-gray-400 mb-4">
+            <p className="text-xs text-[var(--pop-text-muted)] mb-4 font-sans">
               These files are continuously indexed to provide project-specific answers, AST mappings, and architecture definitions.
             </p>
 
@@ -732,17 +757,17 @@ Ask a technical question, or select a quick inquiry below.`
                 { name: 'DEPENDENCIES.lock', type: 'Package Manifests & Deprecations', size: '3.8 KB', synced: '2m ago' },
                 { name: 'AST_INDEX.json', type: 'Tree-sitter Syntax Graph', size: '12.1 KB', synced: '5m ago' },
               ].map((doc, idx) => (
-                <div key={idx} className="p-3 bg-[#162032] border border-[#232F48] rounded-xl flex items-center justify-between">
+                <div key={idx} className="p-3 bg-[var(--pop-card-inner)] border-2 border-black rounded flex items-center justify-between shadow-[2px_2px_0px_#000]">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <FileText className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                     <div>
-                      <span className="font-mono text-xs text-white block">{doc.name}</span>
-                      <span className="text-[11px] text-gray-400 block">{doc.type}</span>
+                      <span className="font-mono text-xs text-[var(--pop-text)] font-bold block">{doc.name}</span>
+                      <span className="text-[11px] text-[var(--pop-text-muted)] block">{doc.type}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-emerald-400 font-mono block">Synced</span>
-                    <span className="text-[10px] text-gray-400 font-mono block">{doc.size}</span>
+                    <span className="text-[10px] text-emerald-600 dark:text-[#00FF66] font-mono font-bold block">Synced</span>
+                    <span className="text-[10px] text-[var(--pop-text-muted)] font-mono block">{doc.size}</span>
                   </div>
                 </div>
               ))}
@@ -751,9 +776,9 @@ Ask a technical question, or select a quick inquiry below.`
             <div className="mt-5 flex justify-end gap-2.5">
               <button
                 onClick={() => setShowKnowledgeBase(false)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                className="px-4 py-2 bg-[#00FF66] hover:bg-emerald-400 text-black border-2 border-black rounded text-xs font-bold font-pixel tracking-wider shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition cursor-pointer"
               >
-                Close
+                CLOSE
               </button>
             </div>
           </div>
@@ -762,30 +787,30 @@ Ask a technical question, or select a quick inquiry below.`
 
       {/* New Project Modal */}
       {showNewProject && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#121926] border border-[#232F48] rounded-2xl p-6 shadow-2xl">
-            <h3 className="font-bold text-lg text-white mb-1">IMPORT REPOSITORY</h3>
-            <p className="text-xs text-gray-400 mb-4">Connect a GitHub repository or paste a public clone URL to revive.</p>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[var(--pop-card)] border-3 border-black rounded p-6 shadow-[6px_6px_0px_#000]">
+            <h3 className="font-pixel text-sm text-[var(--pop-text)] mb-1 tracking-wider">IMPORT REPOSITORY</h3>
+            <p className="text-xs text-[var(--pop-text-muted)] mb-4 font-sans">Connect a GitHub repository or paste a public clone URL to revive.</p>
 
             <form onSubmit={handleCreateProject} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1">Project Name</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--pop-text)] mb-1">Project Name</label>
                 <input
                   type="text"
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-[#162032] border border-[#232F48] text-white text-sm font-medium focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3.5 py-2 rounded bg-[var(--pop-input-bg)] border-2 border-black text-[var(--pop-input-text)] text-sm font-medium focus:outline-none focus:border-emerald-500 shadow-[2px_2px_0px_#000]"
                   placeholder="e.g. Dodo AI"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1">Repository Clone URL</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--pop-text)] mb-1">Repository Clone URL</label>
                 <input
                   type="text"
                   value={newRepoUrl}
                   onChange={(e) => setNewRepoUrl(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl bg-[#162032] border border-[#232F48] text-white text-sm font-medium focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3.5 py-2 rounded bg-[var(--pop-input-bg)] border-2 border-black text-[var(--pop-input-text)] text-sm font-medium focus:outline-none focus:border-emerald-500 shadow-[2px_2px_0px_#000]"
                   placeholder="https://github.com/username/project.git"
                 />
               </div>
@@ -794,13 +819,13 @@ Ask a technical question, or select a quick inquiry below.`
                 <button
                   type="button"
                   onClick={() => setShowNewProject(false)}
-                  className="flex-1 py-2 border border-[#232F48] bg-[#162032] text-xs font-bold text-gray-300 rounded-xl hover:bg-[#1E293B] transition"
+                  className="flex-1 py-2 border-2 border-black bg-[var(--pop-card-alt)] text-xs font-bold text-[var(--pop-text)] rounded shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition"
                 >
                   CANCEL
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition"
+                  className="flex-1 py-2 bg-[#00FF66] hover:bg-emerald-400 text-black text-xs font-bold font-pixel tracking-wider border-2 border-black rounded shadow-[2px_2px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 transition"
                 >
                   IMPORT REPO
                 </button>

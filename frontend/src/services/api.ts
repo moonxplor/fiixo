@@ -56,18 +56,57 @@ export interface Project {
 
 class ApiService {
   private token: string | null = localStorage.getItem('fiixo_access_token');
+  private refreshTokenVal: string | null = localStorage.getItem('fiixo_refresh_token');
 
-  setToken(token: string | null) {
+  setToken(token: string | null, refreshToken?: string | null) {
     this.token = token;
     if (token) {
       localStorage.setItem('fiixo_access_token', token);
     } else {
       localStorage.removeItem('fiixo_access_token');
     }
+
+    if (refreshToken !== undefined) {
+      this.refreshTokenVal = refreshToken;
+      if (refreshToken) {
+        localStorage.setItem('fiixo_refresh_token', refreshToken);
+      } else {
+        localStorage.removeItem('fiixo_refresh_token');
+      }
+    }
   }
 
   getToken(): string | null {
     return this.token || localStorage.getItem('fiixo_access_token');
+  }
+
+  getRefreshToken(): string | null {
+    return this.refreshTokenVal || localStorage.getItem('fiixo_refresh_token');
+  }
+
+  private async tryRefreshToken(): Promise<string | null> {
+    const rt = this.getRefreshToken();
+    if (!rt) return null;
+
+    try {
+      const response = await fetch(`${API_BASE}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: rt })
+      });
+
+      if (!response.ok) {
+        this.setToken(null, null);
+        return null;
+      }
+
+      const data: AuthResponse = await response.json();
+      this.setToken(data.access_token, data.refresh_token);
+      return data.access_token;
+    } catch {
+      this.setToken(null, null);
+      return null;
+    }
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -81,7 +120,7 @@ class ApiService {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    let response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
       headers,
     });
@@ -90,9 +129,23 @@ class ApiService {
       return {} as T;
     }
 
-    if (response.status === 401 && endpoint !== '/auth/login') {
-      this.setToken(null);
-      throw new Error('Your session has expired. Please sign in again.');
+    // Automatic silent token refresh on 401
+    if (response.status === 401 && endpoint !== '/auth/login' && endpoint !== '/auth/refresh') {
+      const refreshedToken = await this.tryRefreshToken();
+      if (refreshedToken) {
+        headers['Authorization'] = `Bearer ${refreshedToken}`;
+        response = await fetch(`${API_BASE}${endpoint}`, {
+          ...options,
+          headers,
+        });
+        if (response.status === 204) {
+          return {} as T;
+        }
+      } else {
+        this.setToken(null, null);
+        window.dispatchEvent(new CustomEvent('fiixo:auth:expired'));
+        throw new Error('Your session has expired. Please sign in again.');
+      }
     }
 
     const data = await response.json();
@@ -109,7 +162,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    this.setToken(res.access_token);
+    this.setToken(res.access_token, res.refresh_token);
     return res;
   }
 
@@ -118,7 +171,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify(payload),
     });
-    this.setToken(res.access_token);
+    this.setToken(res.access_token, res.refresh_token);
     return res;
   }
 
@@ -127,7 +180,7 @@ class ApiService {
   }
 
   logout() {
-    this.setToken(null);
+    this.setToken(null, null);
   }
 
   // Workspaces
